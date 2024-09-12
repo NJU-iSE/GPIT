@@ -4,6 +4,8 @@
 > [!IMPORTANT]
 > 
 > You should have GitHub [Personal Access Token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)  
+
+> [!WARNING]
 > Make sure you have a good network connection to GitHub
 
 > [!Note] 
@@ -16,10 +18,13 @@
 > pip install -r requirements.txt
 >```
 #### Quick Start
-```python
+```bash
 # collect the github issues
-
+python .\main.py --config config/config.yaml main --processor collector --access_tokens {access_tokens} --repo_name pytorch/pytorch
 ```
+above command can collect all the issues from the repo `pytorch/pytorch`.  
+Of course, you can collect issues from other repositories.
+plz change the `{access_tokens}` to your own access tokens
 
 
 
