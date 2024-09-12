@@ -1,0 +1,42 @@
+# config.yaml
+repos_name: "pytorch/pytorch"
+access_token:  "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"
+collect:
+  to_file: "./results/pytorch.csv"
+count:
+  from_file: "./results/pytorch.csv"
+clean:
+  from_file: "./results/pytorch.csv"
+  to_file: "./results/pytorch_hp_filter.csv"
+query:
+  includeFields:
+    number: true
+    title: true
+    body: true
+    createdAt: true
+    state: true
+    labels: true
+    reactions: true
+    comments: true
+  body: |
+    query GetIssues($cursor: String) {
+      repository(owner: "pytorch", name: "pytorch") {
+        issues(first: 100, after: $cursor) {
+          totalCount
+          nodes {
+            number 
+            title
+            body
+            createdAt
+            state
+            labels(first: 100) { nodes { name } }
+            reactions { totalCount }
+            comments { totalCount }
+          }
+          pageInfo {
+            hasNextPage
+            endCursor
+          }
+        }
+      }
+    }
