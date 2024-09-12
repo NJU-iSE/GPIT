@@ -11,13 +11,14 @@ import csv
 import yaml
 from jinja2 import Template
 from ghit.utils.logging import COL_LOG, ClE_LOG, COU_LOG
+import nltk
 
-
+nltk.download('stopwords')
 nltk_stopwords = set(stopwords.words('english'))
 
 
 class Collector:
-    def __init__(self, access_token, repos_name: str = None, query=None, url="https://api.github.com/graphql", headers=None,
+    def __init__(self, access_token, repos_name: str = None, query=None, to_file=None, url="https://api.github.com/graphql", headers=None,
                  **kwargs):
         if headers is None:
             self.headers = {
@@ -29,11 +30,14 @@ class Collector:
         self.repos_name = repos_name
         self.url = url
         self.query = query
-        # print(self.query)
+        self.to_file = to_file
+        if not os.path.exists(os.path.dirname(to_file)):
+            os.makedirs(os.path.dirname(to_file))
 
-    def get_one_page_issues(self, file_path):
+
+    def get_one_page_issues(self):
         data, total_issue_count = get_response_data(self.url, self.query, self.headers, None)
-        with open(file_path, mode='w', newline='', encoding='utf-8') as csvfile:
+        with open(self.to_file, mode='w', newline='', encoding='utf-8') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(["Title", "Body", "CreaDate", "Tags", "State", "Reactions",
                              "Comments", 'Link'])  # 添加 "Reactions" 和 "Comments" 列
@@ -43,9 +47,9 @@ class Collector:
             write_to_file(all_issues, self.repos_name, writer)
         return self
 
-    def get_whole_issues(self, file_path):
+    def get_whole_issues(self):
         start_col_time = time.time()
-        with open(file_path, mode='w', newline='', encoding='utf-8') as csvfile:
+        with open(self.to_file, mode='w', newline='', encoding='utf-8') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(["Title", "Body", "CreaDate", "Tags", "State", "Reactions",
                              "Comments", 'Link'])  # 添加 "Reactions" 和 "Comments" 列
@@ -74,10 +78,10 @@ class Collector:
                 COL_LOG.info(f"ghit have collected and wrote {issue_number} issues into csv! {collect_rate:.2%} completed! {col_time:.2}ms")
         return self
 
-    def get_open_issues(self, file_path):
+    def get_open_issues(self):
         raise NotImplemented
 
-    def get_close_issues(self, file_path):
+    def get_close_issues(self):
         raise NotImplemented
 
 

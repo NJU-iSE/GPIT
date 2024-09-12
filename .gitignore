@@ -1,1 +1,8 @@
-./.idea
+.idea/
+__pycache__/
+
+
+# the passwds or tokens
+*key.txt
+*tokens.txt
+*passwd.txt

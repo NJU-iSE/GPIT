@@ -1,21 +1,25 @@
 # GHIT (GitHub Issue Tools): A toolkit for GitHub Issues
 
 ## Instructions
+> [!IMPORTANT]
+> 
+> You should have GitHub [Personal Access Token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
+> Make sure you have a good network connection to GitHub
+
 > [!Note] 
 >
 > Before you start, please pip install the dependencies:
 > ```bash
 > pip install -r requirements.txt
 >```
-
-1. collect the github issues
+#### Quick Start
 ```python
-import ghit.collector as collector
+# collect the github issues
+
 ```
 
 
 
-2024/1/2@ysy: the toolkit is under development this point
 ## TODO List
 - [ ] the config file needs to be refined
 - [x] Implement collector
@@ -23,10 +27,7 @@ import ghit.collector as collector
 - [ ] Implement counter
 - [ ] Implement analyzer
 
-## Quick Start
 
-
-## Document
 
 ## Project structure (ghit)
 * collector (the module crawling/cleaning/counting data information from GitHub Issues)
