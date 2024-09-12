@@ -71,7 +71,7 @@ def cli(ctx, config_file):
 def main_with_config(ctx, processor, access_tokens, repo_name):
     """ Run the main using a configuration file."""
     config_dict = ctx.obj["CONFIG_DICT"]
-    if processor == "processors":
+    if processor == "collector":
         collect(access_tokens, repo_name, config_dict['query']["body"])
     elif processor == "counter":
         count(repo_name)
