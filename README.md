@@ -3,7 +3,7 @@
 ## Instructions
 > [!IMPORTANT]
 > 
-> You should have GitHub [Personal Access Token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
+> You should have GitHub [Personal Access Token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)  
 > Make sure you have a good network connection to GitHub
 
 > [!Note] 
