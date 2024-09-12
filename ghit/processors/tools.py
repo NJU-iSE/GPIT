@@ -18,7 +18,8 @@ nltk_stopwords = set(stopwords.words('english'))
 
 
 class Collector:
-    def __init__(self, access_token, repos_name: str = None, query=None, to_file=None, url="https://api.github.com/graphql", headers=None,
+    def __init__(self, access_token, repos_name: str = None, query=None, to_file=None,
+                 url="https://api.github.com/graphql", headers=None,
                  **kwargs):
         if headers is None:
             self.headers = {
@@ -33,7 +34,6 @@ class Collector:
         self.to_file = to_file
         if not os.path.exists(os.path.dirname(to_file)):
             os.makedirs(os.path.dirname(to_file))
-
 
     def get_one_page_issues(self):
         data, total_issue_count = get_response_data(self.url, self.query, self.headers, None)
@@ -75,7 +75,8 @@ class Collector:
                     collect_rate = 1
                 current_col_time = time.time()
                 col_time = current_col_time - start_col_time
-                COL_LOG.info(f"ghit have collected and wrote {issue_number} issues into csv! {collect_rate:.2%} completed! {col_time:.2}ms")
+                COL_LOG.info(
+                    f"ghit have collected and wrote {issue_number} issues into csv! {collect_rate:.2%} completed! {col_time:.2}ms")
         return self
 
     def get_open_issues(self):
@@ -90,22 +91,22 @@ class Cleaner:
         # current_path = os.getcwd()
         self.file = from_file
 
-    def clear(self, to_file: str = None):  # need file name
+    def clear(self, to_file: str = None, **kwargs):  # need file name
         import pandas as pd
 
         # 读取CSV文件
         df = pd.read_csv(self.file)
 
-        # 保留满足条件的行
-        date_condition = (df['CreaDate'].str.startswith(('2020', '2021', '2022', '2023')))  # TODO: date range selection
-        tags_filter_condition = df['Tags'].str.contains('high priority', case=False, na=False)  # TODO: must-contained label type selection
-        bug_report = df['Body'].str.contains('bug|Bug', case=False, na=False)
-        bug_entries = df[date_condition & tags_filter_condition & bug_report]
+        years = kwargs.get("years", None)
+        tags = kwargs.get("tags", None)
+        keywords = kwargs.get("keywords", None)
 
-        # tags_priority_condition = bug_entries['Tags'].str.contains('good first issue|high priority', case=False,
-        #                                                            na=False)
-        # filtered_df = bug_entries[tags_priority_condition]
-        filtered_df = bug_entries
+        # FIXME@SHAOYU: how to deal with the case that the filter is None?
+        date_condition = df['CreaDate'].str.startswith(years)
+        tags_filter_condition = df['Tags'].str.contains(tags, case=False,
+                                                        na=False)
+        bug_report = df['Body'].str.contains(keywords, case=False, na=False)
+        filtered_df = df[date_condition & tags_filter_condition & bug_report]
 
         # 保存更改后的文件
         filtered_df.to_csv(f'{to_file}', index=False)
@@ -131,8 +132,9 @@ class Counter:
 
         return df_sorted
 
+
 # def get_query_from_config(**kwargs):
-#     with open('ghit/collector/config.yaml', 'r') as file:
+#     with open('ghit/processors/config.yaml', 'r') as file:
 #         config_data = yaml.load(file, Loader=yaml.FullLoader)
 #
 #     # 更新 includeFields 的值

@@ -1,13 +1,4 @@
 # config.yaml
-repos_name: "pytorch/pytorch"
-access_token:  "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"
-collect:
-  to_file: "./results/pytorch.csv"
-count:
-  from_file: "./results/pytorch.csv"
-clean:
-  from_file: "./results/pytorch.csv"
-  to_file: "./results/pytorch_hp_filter.csv"
 query:
   includeFields:
     number: true

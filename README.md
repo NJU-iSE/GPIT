@@ -19,26 +19,23 @@
 >```
 #### Quick Start
 ```bash
-# collect the github issues
-python .\main.py --config config/config.yaml main --processor collector --access_tokens {access_tokens} --repo_name pytorch/pytorch
+# collect the github issues from one specific repo
+python .\main.py --config config/config.yaml main --processor processors --access_tokens {access_tokens} --repo_name pytorch/pytorch
 ```
 above command can collect all the issues from the repo `pytorch/pytorch`.  
-Of course, you can collect issues from other repositories.
+Of course, you can collect issues from other repositories.  
 plz change the `{access_tokens}` to your own access tokens
 
 
 
 ## TODO List
-- [ ] the config file needs to be refined
-- [x] Implement collector
-- [ ] Implement cleaner
-- [ ] Implement counter
-- [ ] Implement analyzer
-
+- [x] the config file needs to be refined
+- [x] Implement basic tools
+- [ ] use LLM to analyze the issues
 
 
 ## Project structure (ghit)
-* collector (the module crawling/cleaning/counting data information from GitHub Issues)
+* processors (the module crawling/cleaning/counting data information from GitHub Issues)
   * tools
 * analyzer
   * LDA
