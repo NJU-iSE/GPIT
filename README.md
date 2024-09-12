@@ -31,7 +31,7 @@ the results would be saved in `Results/{repo_name}/all_issues.csv`
 python main.py --config config/config.yaml main --processor cleaner --repo_name pytorch/pytorch
 ```
 the filter results would be saved in `Results/{repo_name}/cleaned_issues.csv`  
-you can change the filter conditions in the code ([!WARNING] so sry that this is a dirty operation)
+you can change the filter conditions in the code (so sry that this is a dirty operation)
 
 ## TODO List
 - [x] the config file needs to be refined
