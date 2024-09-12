@@ -7,8 +7,11 @@
 > Make sure you have a good network connection to GitHub
 
 > [!Note] 
->
-> Before you start, please pip install the dependencies:
+> Before you start, clone the repo plz
+> ```bash
+> git clone https://github.com/NJU-iSE/GHIT.git
+> ```
+> then pip install the dependencies:
 > ```bash
 > pip install -r requirements.txt
 >```
