@@ -51,7 +51,7 @@ class Collector:
         start_col_time = time.time()
         with open(self.to_file, mode='w', newline='', encoding='utf-8') as csvfile:
             writer = csv.writer(csvfile)
-            writer.writerow(["Title", "Body", "CreaDate", "Tags", "State", "Reactions",
+            writer.writerow(["Title", "Body", "Code","CreaDate", "Tags", "State", "Reactions",
                              "Comments", 'Link'])  # 添加 "Reactions" 和 "Comments" 列
 
             # issues = self.data["data"]["repository"]["issues"]
@@ -207,12 +207,15 @@ def write_to_file(all_issues, repos_name, writer):
         # exit()
         title = issue['title']
         body = issue['body']
+        code = "\n".join(re.findall(r'```([\s\S]*?)```', body))
+
+
         body = body.replace('"', ' ')  # 消除引号部分
-        body = re.sub(r'@\w+', '', body)
+        body = re.sub(r'@\w+', '', body)  # 删除@用户名
         body = re.sub(r'```[\s\S]*?```', ' ', body)  # 删除代码块
-        body = re.sub(r'[^a-zA-Z\s.]', ' ', body)  # 删除非字母和空格字符
-        title = re.sub(r'[^a-zA-Z\s]', ' ', title)  # 删除标点符号
-        body = body.replace('\n', ' ').strip()  # 消除回车符并去除首尾空格
+        body = re.sub(r'[^a-zA-Z0-9\s,.]', ' ', body)
+        title = re.sub(r'[^a-zA-Z0-9\s,.]', ' ', title)
+        # body = body.replace('\n', ' ').strip()  # 消除回车符并去除首尾空格
         body = body.replace('`', ' ')
         body = body.replace('"', ' ')
         body = body.replace("'", ' ')
@@ -232,7 +235,12 @@ def write_to_file(all_issues, repos_name, writer):
         repo_url = "https://github.com/" + repos_name
         issue_id = issue['number']
         issue_link = f"{repo_url}/issues/{issue_id}"
-        writer.writerow([title, body, created_at, labels, state, reactions_count,
+
+
+        if len(code) == 4:
+            print(f"[debug] the code is {len(code)}")
+            print(issue_link)
+        writer.writerow([title, body, code, created_at, labels, state, reactions_count,
                          comments_count, issue_link])  # 写入新的列 "Reactions" 和 "Comments"
 
 
