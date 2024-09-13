@@ -20,11 +20,11 @@
 #### Quick Start
 ```bash
 # collect the github issues from one specific repo
-python main.py --config config/config.yaml main --processor collector --access_tokens {access_tokens} --repo_name pytorch/pytorch
+python main.py --config config/config.yaml main --processor collector --access_tokens ${ACCESS_TOKEN} --repo_name pytorch/pytorch
 ```
 above command can collect all the issues from the repo `pytorch/pytorch`.  
 Of course, you can collect issues from other repositories.  
-plz change the `{access_tokens}` to your own access tokens  
+plz change the `${ACCESS_TOKEN}` to your own access tokens  
 the results would be saved in `Results/{repo_name}/all_issues.csv`  
 ```bash
 # filter the issues by the given conditions (cleaner)

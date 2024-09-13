@@ -88,28 +88,35 @@ class Collector:
 
 class Cleaner:
     def __init__(self, from_file: str = None):
-        # current_path = os.getcwd()
         self.file = from_file
 
-    def clear(self, to_file: str = None, **kwargs):  # need file name
+    def clear(self, to_file: str = None, **kwargs):
         import pandas as pd
+        from functools import reduce
+        import operator
 
-        # 读取CSV文件
         df = pd.read_csv(self.file)
 
         years = kwargs.get("years", None)
         tags = kwargs.get("tags", None)
         keywords = kwargs.get("keywords", None)
 
-        # FIXME@SHAOYU: how to deal with the case that the filter is None?
-        date_condition = df['CreaDate'].str.startswith(years)
-        tags_filter_condition = df['Tags'].str.contains(tags, case=False,
-                                                        na=False)
-        bug_report = df['Body'].str.contains(keywords, case=False, na=False)
-        filtered_df = df[date_condition & tags_filter_condition & bug_report]
+        conditions = []
 
-        # 保存更改后的文件
-        filtered_df.to_csv(f'{to_file}', index=False)
+        if years:
+            conditions.append(df['CreaDate'].str.startswith(years))
+        if tags:
+            conditions.append(df['Tags'].str.contains(tags, case=False, na=False))
+        if keywords:
+            conditions.append(df['Body'].str.contains(keywords, case=False, na=False))
+
+        if conditions:
+            combined_condition = reduce(operator.and_, conditions)
+            filter_df = df[combined_condition]
+        else:
+            filter_df = df
+
+        filter_df.to_csv(f'{to_file}', index=False)
 
 
 class Counter:
@@ -182,15 +189,16 @@ def process_text(text):
     return text.strip()
 
 
-def merge(intput_text: str):
+def word_only(intput_text: str, numbers: int):
     intput_text = intput_text.replace('.', ' ')
     str_list = intput_text.split(" ")
-    str_list = [x for x in str_list if x][:300]
+    str_list = [x for x in str_list if x][:numbers]
     output = " ".join(str_list)
     return output
 
 
 def write_to_file(all_issues, repos_name, writer):
+    # FIXME@SHAOYU: how to make the filter condition in config yaml?
     for issue in all_issues:
         # for item in issue:
         #     print(item)
@@ -201,9 +209,9 @@ def write_to_file(all_issues, repos_name, writer):
         body = issue['body']
         body = body.replace('"', ' ')  # 消除引号部分
         body = re.sub(r'@\w+', '', body)
-        body = re.sub(r'```[\s\S]*?```', ' ', body)
-        body = re.sub(r'[^a-zA-Z\s.]', ' ', body)
-        title = re.sub(r'[^a-zA-Z\s]', ' ', title)
+        body = re.sub(r'```[\s\S]*?```', ' ', body)  # 删除代码块
+        body = re.sub(r'[^a-zA-Z\s.]', ' ', body)  # 删除非字母和空格字符
+        title = re.sub(r'[^a-zA-Z\s]', ' ', title)  # 删除标点符号
         body = body.replace('\n', ' ').strip()  # 消除回车符并去除首尾空格
         body = body.replace('`', ' ')
         body = body.replace('"', ' ')
@@ -213,8 +221,8 @@ def write_to_file(all_issues, repos_name, writer):
         text_list = [text for text in text_list if '/' or '\\' not in text]
         # 将过滤后的子字符串重新连接成一个文本
         body = ' '.join(text_list)
-        title = merge(title)
-        body = merge(body)
+        # title = word_only(title, 300)
+        # body = word_only(body, 300)
         # body = f'"{body}"'
         created_at = issue['createdAt']
         state = issue['state']
