@@ -14,18 +14,19 @@ def collect(access_token, repo_name, query):
     collector.get_whole_issues()
 
 
-def count(repo_name):
-    assert f"Results/{repo_name.split('/')[-1]}/all_issues.csv" is not None, "you should collect the issues firstly"
-    counter = Counter(f"Results/{repo_name.split('/')[-1]}/all_issues.csv")
-    df = counter.prio_rank({"Comments": 1}, 1000)
-
-    df.to_csv(f"Results/{repo_name.split('/')[-1]}/ranked_issues.csv")
-
-
 def clean(repo_name):
+    assert f"Results/{repo_name.split('/')[-1]}/all_issues.csv" is not None, "you should collect the issues firstly"
     cleaner = Cleaner(f"Results/{repo_name.split('/')[-1]}/all_issues.csv")
-    cleaner.clear(f"Results/{repo_name.split('/')[-1]}/cleaned_issues.csv", years=("2020", "2021", "2022", "2023", "2024"), tags="memory", keywords="bug|Bug")
+    cleaner.clear(f"Results/{repo_name.split('/')[-1]}/cleaned_issues.csv",
+                  years=("2020", "2021", "2022", "2023", "2024"), tags="memory", keywords="bug|Bug")
 
+
+def count(repo_name):
+    assert f"Results/{repo_name.split('/')[-1]}/cleaned_issues.csv" is not None, "you should clean the issues firstly"
+    counter = Counter(f"Results/{repo_name.split('/')[-1]}/cleaned_issues.csv")
+    df = counter.prio_rank({"Comments": 1}, 1000)
+    df.to_csv(f"Results/{repo_name.split('/')[-1]}/ranked_issues.csv")
+    print(df.__len__())
 
 
 @click.group()
@@ -73,10 +74,10 @@ def main_with_config(ctx, processor, access_tokens, repo_name):
     config_dict = ctx.obj["CONFIG_DICT"]
     if processor == "collector":
         collect(access_tokens, repo_name, config_dict['query']["body"])
-    elif processor == "counter":
-        count(repo_name)
     elif processor == "cleaner":
         clean(repo_name)
+    elif processor == "counter":
+        count(repo_name)
 
     print("[dev] everything is ok")
 

@@ -33,6 +33,11 @@ python main.py --config config/config.yaml main --processor cleaner --repo_name 
 the filter results would be saved in `Results/{repo_name}/cleaned_issues.csv`  
 you can change the filter conditions in the code (so sry that this is a dirty operation)
 
+```bash
+# count the issues by the given conditions (counter)
+python main.py --config config/config.yaml main --processor counter --repo_name pytorch/pytorch
+```
+
 ## TODO List
 - [x] the config file needs to be refined
 - [x] Implement basic tools
