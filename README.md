@@ -38,10 +38,22 @@ you can change the filter conditions in the code (so sry that this is a dirty op
 python main.py --config config/config.yaml data --processor counter --repo_name pytorch/pytorch
 ```
 
+> [!IMPORTANT]
+> 
+> After collecting the above issues, you can use the `analyzer` module (LLM-based) to analyze the issues.
+
+> [!WARNING]
+> 
+> Due to the analyzer is LLM-based, you may need enough GPU resources to run the analyzer (Based on my experience, it needs at least 32GB GPU memory).
+
+```bash
+python main.py --config config/config.yaml --repo_name pytorch/pytorch analyze
+```
+
 ## TODO List
 - [x] the config file needs to be refined
 - [x] Implement basic tools
-- [ ] use LLM to analyze the issues
+- [x] use LLM to analyze the issues
 
 
 ## Project structure (ghit)
@@ -54,5 +66,5 @@ python main.py --config config/config.yaml data --processor counter --repo_name 
 
 
 #### Future
-- [ ] implement LLM analyzer
+- [x] implement LLM analyzer
 - [ ] test the System

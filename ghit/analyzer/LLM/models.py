@@ -1,6 +1,6 @@
 from transformers import AutoTokenizer
 from vllm import LLM, SamplingParams
-
+import os
 
 class Model:
     """
@@ -11,7 +11,7 @@ class Model:
         self.tokenizer = AutoTokenizer.from_pretrained(model_path)
         self.sampling_params = SamplingParams(temperature=temperature, top_p=top_p, repetition_penalty=repetition_penalty,
                                               max_tokens=max_tokens)
-        self.native_model = LLM(model=model_path, dtype="half")
+        self.native_model = LLM(model=model_path, dtype="half", tensor_parallel_size=4)
 
     def get_answer(self, system_content, prompt):
         message = [

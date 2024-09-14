@@ -25,7 +25,7 @@ query:
 
 
 model:
-  model_path: "Qwen/Qwen2-7B-Instruct"
+  model_path: "Qwen/Qwen2-72B-Instruct-GPTQ-Int8"
   temperature: 1
   top_p: 0.8
   repetition_penalty: 1.05
