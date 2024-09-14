@@ -13,9 +13,9 @@ class Model:
                                               max_tokens=max_tokens)
         self.native_model = LLM(model=model_path, dtype="half")
 
-    def get_answer(self, prompt):
+    def get_answer(self, system_content, prompt):
         message = [
-            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "system", "content": system_content},
             {"role": "user", "content": prompt}
         ]
 
@@ -24,3 +24,11 @@ class Model:
         outputs = self.native_model.generate([text], self.sampling_params)
 
         return outputs
+
+
+class QwenModel (Model):
+    """
+    a class for managing the Qwen model.
+    """
+    def __init__(self, model_path, temperature=0.7, top_p=0.8, repetition_penalty=1.05, max_tokens=512):
+        super().__init__(model_path, temperature, top_p, repetition_penalty, max_tokens)

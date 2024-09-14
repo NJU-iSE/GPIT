@@ -235,11 +235,6 @@ def write_to_file(all_issues, repos_name, writer):
         repo_url = "https://github.com/" + repos_name
         issue_id = issue['number']
         issue_link = f"{repo_url}/issues/{issue_id}"
-
-
-        if len(code) == 4:
-            print(f"[debug] the code is {len(code)}")
-            print(issue_link)
         writer.writerow([title, body, code, created_at, labels, state, reactions_count,
                          comments_count, issue_link])  # 写入新的列 "Reactions" 和 "Comments"
 
