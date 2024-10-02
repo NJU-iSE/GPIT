@@ -1,5 +1,5 @@
 # GHIT (GitHub Issue Tools): A toolkit for GitHub Issues
-This is a semi-finished project developed by @shaoyuyoung
+This is a semi-finished project developed by [Shaoyu](https://github.com/shaoyuyoung)
 ## Instructions
 > [!IMPORTANT]
 > 
@@ -45,7 +45,7 @@ python main.py --config config/config.yaml data --processor counter --repo_name 
 > [!WARNING]
 > 
 > Due to the analyzer is LLM-based, you may need enough GPU resources to run the analyzer
-> (@shaoyuyoung: Based on my experience, it needs at least 32GB GPU memory because we use [Qwen2.5-Coder-7B-Instruct](https://huggingface.co/Qwen/Qwen2.5-Coder-7B-Instruct)).
+> (Based on my experience, it needs at least 32GB GPU memory because we use [Qwen2.5-Coder-7B-Instruct](https://huggingface.co/Qwen/Qwen2.5-Coder-7B-Instruct)).
 
 ```bash
 python main.py --config config/config.yaml --repo_name pytorch/pytorch analyze
