@@ -1,6 +1,9 @@
 from transformers import AutoTokenizer
 from vllm import LLM, SamplingParams
+from huggingface_hub import login
 import os
+
+login(os.environ["HUGGINGFACE_TOKEN"])
 
 class Model:
     """
