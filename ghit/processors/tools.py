@@ -124,7 +124,7 @@ class Counter:
         self.file = file
 
     def prio_rank(self, col_weights: dict[str, float], top_n: int = None) -> pd.DataFrame:  # need file name
-        df = pd.read_csv(self.file)  # 读取csv文件
+        df = pd.read_csv(self.file)
         total_weight = sum(col_weights.values())  # compute the sum of all weights
         sort_key_df = pd.DataFrame()
         for col in df.columns:
@@ -156,6 +156,7 @@ class Counter:
 def process_text(text):
     if isinstance(text, float):
         return ''
+    # TODO@YSY: put these into parameter control
     # text = text.lower()
     # replace "error" as "bug"
     # text = text.replace('error', 'bug')
@@ -204,7 +205,6 @@ def write_to_file(all_issues, repos_name, writer):
         #     print(item)
         # print(issue['number'])
         # print("https://github.com/pytorch/pytorch"+f"/issues/{issue['number']}")
-        # exit()
         title = issue['title']
         body = issue['body']
         code = "\n".join(re.findall(r'```([\s\S]*?)```', body))

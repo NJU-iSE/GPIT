@@ -38,21 +38,13 @@ def count(repo_name):
     default=None,
     help="Path to the configure file.",
 )
-@click.option(
-    "repo_name",
-    "--repo_name",
-    type=str,
-    default=None,
-    help="the path of the repository"
-)
 @click.pass_context
-def cli(ctx, config_file, repo_name):
+def cli(ctx, config_file):
     """run the main using a configuration file"""
     if config_file is not None:
         config_dict = load_config_file(config_file)
         ctx.ensure_object(dict)
         ctx.obj["CONFIG_DICT"] = config_dict
-        ctx.obj["REPO_NAME"] = repo_name
 
 
 @cli.command("data")
@@ -78,10 +70,9 @@ def cli(ctx, config_file, repo_name):
     default=None,
     help="the name of the repository"
 )
-def data_process(ctx, processor, access_tokens):
+def data_process(ctx, processor, access_tokens, repo_name):
     """ Run data processing"""
     config_dict = ctx.obj["CONFIG_DICT"]
-    repo_name = ctx.obj["REPO_NAME"]
     if processor == "collector":
         collect(access_tokens, repo_name, config_dict['query']["body"])
     elif processor == "cleaner":

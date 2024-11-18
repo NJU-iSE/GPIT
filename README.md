@@ -1,12 +1,13 @@
 # GHIT (GitHub Issue Tools): A toolkit for GitHub Issues
-This is a semi-finished project developed by [Shaoyu](https://github.com/shaoyuyoung)
+
 ## Instructions
 > [!IMPORTANT]
 > 
-> You should have GitHub [Personal Access Token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)  
+> You should have GitHub [Personal Access Token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) because we use [graphql](https://docs.github.com/en/graphql) to crawl the issues.
 
 > [!WARNING]
-> Make sure you have a good network connection to GitHub
+> 1. Make sure you have a good network connection to GitHub
+> 2. If you want to use LLM analyzer locally, make sure run the code in Linux (because we use [vLLM](https://github.com/vllm-project/vllm) to deploy LLMs)
 
 > [!Note] 
 > Before you start, clone the repo plz

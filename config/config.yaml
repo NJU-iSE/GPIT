@@ -25,10 +25,15 @@ query:
 
 
 model:
-  model_path: "Qwen/Qwen2.5-Coder-7B-Instruct"
+  model_path: "Qwen/Qwen2.5-Coder-32B-Instruct"
   temperature: 1
   top_p: 0.8
   repetition_penalty: 1.05
   max_tokens: 128
   system_content: "Your are an excellent issue summarizer."
-  prompt_template: "Here is the issue title: {title}. \nHere is the issue body: {body}. \nHere is the issue code: {code}. \nNote that issue body or code may be nan (means empty). Please help me analyze this issue from memory aspect. Give me the issue symptom and solution."
+  prompt_template: | 
+    Here is the issue title: {title}. 
+    Here is the issue body: {body}. 
+    Here is the issue code: {code}. 
+    Note that issue body or code may be nan (means empty). Please help me analyze this issue from memory aspect. 
+    Give me the issue symptom and solution.

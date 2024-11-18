@@ -1,9 +1,15 @@
 from transformers import AutoTokenizer
-from vllm import LLM, SamplingParams
+try:
+    from vllm import LLM, SamplingParams
+except ImportError:
+    print("failed to load vllm")
 from huggingface_hub import login
 import os
 
-login(os.environ["HUGGINGFACE_TOKEN"])
+try:
+    login(os.environ["HUGGINGFACE_TOKEN"])
+except KeyError:
+    print("failed to login with huggingface token")
 
 class Model:
     """
