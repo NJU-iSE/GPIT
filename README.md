@@ -21,7 +21,8 @@
 #### Quick Start
 ```bash
 # collect the github issues from one specific repo
-python main.py --config config/config.yaml data --processor collector --access_tokens ${ACCESS_TOKEN} --repo_name pytorch/pytorch
+python main.py --repo_path pytorh/pytorch run_collection \
+              --access_tokens {YOUR_ACCESS_TOKENS}
 ```
 above command can collect all the issues from the repo `pytorch/pytorch`.  
 Of course, you can collect issues from other repositories.  
@@ -29,7 +30,10 @@ plz change the `${ACCESS_TOKEN}` to your own access tokens
 the results would be saved in `Results/{repo_name}/all_issues.csv`  
 ```bash
 # filter the issues by the given conditions (cleaner)
-python main.py --config config/config.yaml data --processor cleaner --repo_name pytorch/pytorch
+python main.py --repo_path pytorh/pytorch run_cleaning \
+              --years [2020,2021,2022,2023,2024] \
+              --tags "module: memory usage, high priority"  \
+              --save_cols [Title,Tags,Link,Year]
 ```
 the filter results would be saved in `Results/{repo_name}/cleaned_issues.csv`  
 you can change the filter conditions in the code (so sry that this is a dirty operation)

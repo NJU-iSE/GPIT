@@ -1,125 +1,86 @@
-from ghit.processors import collecter, cleaner, counter
-import logging
+import fire
+import re
+import operator
 import pandas as pd
-import yaml
-import click
-from utils import load_config_file
-from ghit.analyzer.LLM.models import QwenModel
 
-logging.basicConfig(level=logging.INFO)
+from typing import Union, List
+from functools import reduce
+from pathlib import Path
 
-
-def collect(access_token, repo_name, query):
-    cor = collecter.Collector(access_token, repos_name=repo_name, query=query,
-                          to_file=f"Results/{repo_name.split('/')[-1]}/all_issues.csv")
-    cor.get_whole_issues()
+from ghit.utils.utils import load_config_file
+from ghit.processors import collecter, counter
 
 
-def clean(repo_name):  # FIXME@YSY: this should be controlled by the config file or parameters?
-    assert f"Results/{repo_name.split('/')[-1]}/all_issues.csv" is not None, "you should collect the issues firstly"
-    clr = cleaner.Cleaner(f"Results/{repo_name.split('/')[-1]}/all_issues.csv")
-    clr.clear(f"Results/{repo_name.split('/')[-1]}/cleaned_issues.csv", save_col=["Title", "CreaDate", "State", "Link"],
-                  years=("2020", "2021", "2022", "2023", "2024"), tags="memory", keywords="bug|Bug")
+class Pipeline(object):
+    def __init__(
+        self,
+        repo_path=None,
+        config_file="config/config.yaml"
+    ):
+        self.repo_path = repo_path
+        self.config = load_config_file(config_file)
+
+    def run_collection(
+        self,
+        access_tokens,
+    ):
+        query = self.config['query']["body"]
+        cor = collecter.Collector(access_tokens, repos_name=self.repo_path, query=query,
+                                  to_file=f"Results/{self.repo_path.split('/')[-1]}/all_issues.csv")
+        cor.get_whole_issues()
+
+    def run_cleaning(
+        self,
+        years: Union[List[str], str] = None,
+        tags: Union[List[str], str] = None,
+        keywords: str = None,
+        save_cols: List[str] = None,
+        res_name: str = "cleaned_issues.csv"
+    ):
+        file_path = f"Results/{self.repo_path.split('/')[-1]}/all_issues.csv"
+        df = pd.read_csv(file_path)
+
+        if years is not None:
+            df['CreaDate'] = pd.to_datetime(df['CreaDate'])
+            df["Year"] = df['CreaDate'].dt.year
+            if isinstance(years, str):
+                years = [years]
+
+            df = df[df["Year"].isin(years)]
+            if "Year" not in (save_cols or []):
+                df = df.drop(columns=["Year"])
+
+        if tags is not None:
+            if isinstance(tags, str):
+                tags = tags.split(", ")
+            df['Tags'] = df['Tags'].fillna('').apply(lambda x: x.split(', ') if x else [])
+            df = df[df['Tags'].apply(lambda x: all(tag in x for tag in tags))]
+
+        if keywords is not None:
+            if isinstance(keywords, str):
+                keywords = [keywords]
+            pattern = re.compile('|'.join(keywords), re.IGNORECASE)
+            df = df[df["Body"].fillna("").apply(lambda x: bool(pattern.search(x)))]
+
+        if save_cols is not None:
+            if not isinstance(save_cols, list):
+                raise ValueError("save_col must be a list")
+            missing_cols = set(save_cols) - set(df.columns)
+            if missing_cols:
+                raise ValueError(f"no col names: {', '.join(missing_cols)}")
+            df = df[save_cols]
+
+        df.to_csv(Path(file_path).parent / res_name, index=False)
+
+    def run_counting(
+        self,
+        draw: bool = False,
+    ):
+        pass
+
+    def run_analysis(self):
+        pass
 
 
-def count(repo_name):
-    assert f"Results/{repo_name.split('/')[-1]}/cleaned_issues.csv" is not None, "you should clean the issues firstly"
-    ctr = counter.Counter(f"Results/{repo_name.split('/')[-1]}/cleaned_issues.csv")
-    # df = counter.prio_rank({"Comments": 1}, 1000)
-    # df.to_csv(f"Results/{repo_name.split('/')[-1]}/ranked_issues.csv")
-    # print(df.__len__())
-
-    ctr.draw_counts_by_year()
-
-@click.group()
-@click.option(
-    "config_file",
-    "--config",
-    type=str,
-    default=None,
-    help="Path to the configure file.",
-)
-@click.pass_context
-def cli(ctx, config_file):
-    """run the main using a configuration file"""
-    if config_file is not None:
-        config_dict = load_config_file(config_file)
-        ctx.ensure_object(dict)
-        ctx.obj["CONFIG_DICT"] = config_dict
-
-
-@cli.command("data")
-@click.pass_context
-@click.option(
-    "processor",
-    "--processor",
-    type=str,
-    default=None,
-    help="use the specific processor to do something (i.e., processors, counter, and cleaner)"
-)
-@click.option(
-    "access_tokens",
-    "--access_tokens",
-    type=str,
-    default=None,
-    help="refer to https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens"
-)
-@click.option(
-    "repo_name",
-    "--repo_name",
-    type=str,
-    default=None,
-    help="the name of the repository"
-)
-def data_process(ctx, processor, access_tokens, repo_name):
-    """ Run data processing"""
-    config_dict = ctx.obj["CONFIG_DICT"]
-    if processor == "collector":
-        collect(access_tokens, repo_name, config_dict['query']["body"])
-    elif processor == "cleaner":
-        clean(repo_name)
-    elif processor == "counter":
-        count(repo_name)
-
-    print("[dev] everything is ok")
-
-
-@cli.command("analyze")
-@click.pass_context
-def analyze(ctx):
-    """Run analyzer"""
-    config_dict = ctx.obj["CONFIG_DICT"]
-    repo_name = ctx.obj["REPO_NAME"]
-    model_config = config_dict["model"]
-
-    issues = pd.read_csv(f"Results/{repo_name.split('/')[-1]}/cleaned_issues.csv")
-
-    model = QwenModel(model_path=model_config["model_path"], temperature=model_config["temperature"],
-                      top_p=model_config["top_p"], repetition_penalty=model_config["repetition_penalty"],
-                      max_tokens=model_config["max_tokens"])
-
-    analysis_result = []
-
-    for index, issue in issues.iterrows():
-        title = issue["Title"]
-        body = issue["Body"]
-        code = issue["Code"]
-
-        prompt_template = model_config["prompt_template"]
-        prompt = prompt_template.format(title=title, body=body, code=code)
-
-        outputs = model.get_answer(system_content=model_config["system_content"], prompt=prompt)
-
-        answer = outputs[0].outputs[0].text
-        analysis_result.append(answer)
-
-    issues["Analysis"] = analysis_result
-
-    output_file_path = f"Results/{repo_name.split('/')[-1]}/analyzed_issues.csv"
-    issues.to_csv(output_file_path, index=False)
-
-    print(f"[dev] fin!")
-
-
-if __name__ == '__main__':
-    cli()
+if __name__ == "__main__":
+    fire.Fire(Pipeline)

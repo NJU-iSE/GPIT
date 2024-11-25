@@ -15,7 +15,6 @@ class Collector:
             }
         else:
             self.headers = headers
-        # 定义查询字符串
         self.repos_name = repos_name
         self.url = url
         self.query = query

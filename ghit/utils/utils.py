@@ -3,7 +3,7 @@ import nltk
 from nltk.corpus import stopwords
 import requests
 import email
-
+import yaml
 
 
 nltk.download('stopwords')
@@ -112,3 +112,9 @@ def draw_line_chart(title, x_label, y_label, x_data, y_data, save_path=None):
         plt.savefig(save_path)
     plt.show()
     return
+
+def load_config_file(filepath: str):
+    """Loads a YAML configuration file."""
+    with open(filepath, "r") as f:
+        config = yaml.load(f, Loader=yaml.FullLoader)
+    return config
