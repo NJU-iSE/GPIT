@@ -1,4 +1,4 @@
-from ghit.processors.tools import Collector, Cleaner, Counter
+from ghit.processors import collecter, cleaner, counter
 import logging
 import pandas as pd
 import yaml
@@ -10,25 +10,26 @@ logging.basicConfig(level=logging.INFO)
 
 
 def collect(access_token, repo_name, query):
-    collector = Collector(access_token, repos_name=repo_name, query=query,
+    cor = collecter.Collector(access_token, repos_name=repo_name, query=query,
                           to_file=f"Results/{repo_name.split('/')[-1]}/all_issues.csv")
-    collector.get_whole_issues()
+    cor.get_whole_issues()
 
 
-def clean(repo_name):
+def clean(repo_name):  # FIXME@YSY: this should be controlled by the config file or parameters?
     assert f"Results/{repo_name.split('/')[-1]}/all_issues.csv" is not None, "you should collect the issues firstly"
-    cleaner = Cleaner(f"Results/{repo_name.split('/')[-1]}/all_issues.csv")
-    cleaner.clear(f"Results/{repo_name.split('/')[-1]}/cleaned_issues.csv",
+    clr = cleaner.Cleaner(f"Results/{repo_name.split('/')[-1]}/all_issues.csv")
+    clr.clear(f"Results/{repo_name.split('/')[-1]}/cleaned_issues.csv", save_col=["Title", "CreaDate", "State", "Link"],
                   years=("2020", "2021", "2022", "2023", "2024"), tags="memory", keywords="bug|Bug")
 
 
 def count(repo_name):
     assert f"Results/{repo_name.split('/')[-1]}/cleaned_issues.csv" is not None, "you should clean the issues firstly"
-    counter = Counter(f"Results/{repo_name.split('/')[-1]}/cleaned_issues.csv")
-    df = counter.prio_rank({"Comments": 1}, 1000)
-    df.to_csv(f"Results/{repo_name.split('/')[-1]}/ranked_issues.csv")
-    print(df.__len__())
+    ctr = counter.Counter(f"Results/{repo_name.split('/')[-1]}/cleaned_issues.csv")
+    # df = counter.prio_rank({"Comments": 1}, 1000)
+    # df.to_csv(f"Results/{repo_name.split('/')[-1]}/ranked_issues.csv")
+    # print(df.__len__())
 
+    ctr.draw_counts_by_year()
 
 @click.group()
 @click.option(
@@ -118,6 +119,7 @@ def analyze(ctx):
     issues.to_csv(output_file_path, index=False)
 
     print(f"[dev] fin!")
+
 
 if __name__ == '__main__':
     cli()
