@@ -1,11 +1,8 @@
-transformers~=4.46.2
-vllm
 pandas~=2.2.2
 requests~=2.32.2
 PyYAML~=6.0.1
 nltk~=3.9
 Jinja2~=3.1.4
 click~=8.1.7
-huggingface-hub~=0.26.2
 fire~=0.7.0
-yaml~=0.2.5
+PyYAML

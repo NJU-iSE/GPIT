@@ -26,7 +26,7 @@ python main.py --repo_path pytorh/pytorch run_collection \
 ```
 above command can collect all the issues from the repo `pytorch/pytorch`.  
 Of course, you can collect issues from other repositories.  
-plz change the `${ACCESS_TOKEN}` to your own access tokens  
+plz change the `${YOUR_ACCESS_TOKENS}` to your own access tokens  
 the results would be saved in `Results/{repo_name}/all_issues.csv`  
 ```bash
 # filter the issues by the given conditions (cleaner)
