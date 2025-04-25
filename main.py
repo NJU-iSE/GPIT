@@ -25,7 +25,12 @@ class Pipeline(object):
         access_tokens,
     ):
         query = self.config['query']["body"]
-        cor = collecter.Collector(access_tokens, repos_name=self.repo_path, query=query,
+        variables = {
+            "cursor": None,
+            "owner": self.repo_path.split("/")[0],
+            "name": self.repo_path.split("/")[1]
+        }
+        cor = collecter.Collector(access_tokens, repos_name=self.repo_path, query=query, variables=variables,
                                   to_file=f"Results/{self.repo_path.split('/')[-1]}/all_issues.csv")
         print("collecter is initialized successfully")
         cor.get_whole_issues()

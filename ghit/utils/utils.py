@@ -94,8 +94,8 @@ def write_to_file(all_issues, repos_name, writer):
                          comments_count, issue_link])  # 写入新的列 "Reactions" 和 "Comments"
 
 
-def get_response_data(url, query, headers, cursor):
-    response = requests.post(url, json={"query": query, "variables": {"cursor": cursor}}, headers=headers)
+def get_response_data(url, query, headers, variables=None):
+    response = requests.post(url, json={"query": query, "variables": variables}, headers=headers)
     assert response.status_code == 200, f"{response}"  # set the assertion
     data = response.json()
     total_issues_count = data["data"]["repository"]["issues"]["totalCount"]

@@ -1,8 +1,8 @@
 # config.yaml
 query:
   body: |
-    query GetIssues($cursor: String) {
-      repository(owner: "pytorch", name: "pytorch") {
+    query GetIssues($cursor: String, $owner: String!, $name: String!) {
+      repository(owner: $owner, name: $name) {
         issues(first: 100, after: $cursor) {
           totalCount
           nodes {
