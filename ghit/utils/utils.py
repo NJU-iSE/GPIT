@@ -16,7 +16,7 @@ def process_text(text):
     # text = text.lower()
     # replace "error" as "bug"
     # text = text.replace('error', 'bug')
-    text = text.replace('na', 'nan')
+    # text = text.replace('na', 'nan')
 
     # delete the words containing "http"
     text = re.sub(r'http\S+', '', text)
@@ -65,19 +65,17 @@ def write_to_file(all_issues, repos_name, writer):
         body = issue['body']
         code = "\n".join(re.findall(r'```([\s\S]*?)```', body))
 
-        body = body.replace('"', ' ')  # 消除引号部分
-        body = re.sub(r'@\w+', '', body)  # 删除@用户名
-        body = re.sub(r'```[\s\S]*?```', ' ', body)  # 删除代码块
+        body = body.replace('"', ' ')  # eliminate the "
+        body = re.sub(r'@\w+', '', body)  # delete @account
+        body = re.sub(r'```[\s\S]*?```', ' ', body)  # delete code block
         body = re.sub(r'[^a-zA-Z0-9\s,.]', ' ', body)
         title = re.sub(r'[^a-zA-Z0-9\s,.]', ' ', title)
-        # body = body.replace('\n', ' ').strip()  # 消除回车符并去除首尾空格
+        # body = body.replace('\n', ' ').strip()  # eliminate the \n
         body = body.replace('`', ' ')
         body = body.replace('"', ' ')
         body = body.replace("'", ' ')
         text_list = body.split()
-        # 使用列表推导式来过滤掉包含斜杠字符"/"的子字符串
         text_list = [text for text in text_list if '/' or '\\' not in text]
-        # 将过滤后的子字符串重新连接成一个文本
         body = ' '.join(text_list)
         # title = word_only(title, 300)
         # body = word_only(body, 300)
@@ -85,13 +83,13 @@ def write_to_file(all_issues, repos_name, writer):
         created_at = issue['createdAt']
         state = issue['state']
         labels = ", ".join(label['name'] for label in issue['labels']['nodes'])
-        reactions_count = issue['reactions']['totalCount']  # 获取点赞数
-        comments_count = issue['comments']['totalCount']  # 获取评论数
+        reactions_count = issue['reactions']['totalCount']  # get reactions count
+        comments_count = issue['comments']['totalCount']  # get comments count
         repo_url = "https://github.com/" + repos_name
         issue_id = issue['number']
         issue_link = f"{repo_url}/issues/{issue_id}"
         writer.writerow([title, body, code, created_at, labels, state, reactions_count,
-                         comments_count, issue_link])  # 写入新的列 "Reactions" 和 "Comments"
+                         comments_count, issue_link])  # write reactions and comments count to file
 
 
 def get_response_data(url, query, headers, variables=None):
