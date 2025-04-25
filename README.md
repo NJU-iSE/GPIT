@@ -60,6 +60,7 @@ After this step, you would get the results in `Results/{repo_name}/analyzer_resu
 You can use LLMs to specifically analyze the issues.
 
 ## TODO List
+- [ ] use logging tools instead of `print`
 - [x] the config file needs to be refined
 - [x] Implement basic tools
 - [x] use LLM to analyze the issues

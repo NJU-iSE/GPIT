@@ -2,7 +2,8 @@ import os
 from ghit.utils.utils import write_to_file, get_response_data
 import csv
 import time
-from ghit.utils.logging import COL_LOG, ClE_LOG, COU_LOG
+from ghit.utils.logging import COL_LOG, ClE_LOG, COU_LOG, logging
+
 
 
 class Collector:
