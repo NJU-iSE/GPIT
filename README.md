@@ -1,6 +1,6 @@
 # GHIT (GitHub Issue Tools): A toolkit for GitHub Issues
 
-## ✨️Instructions
+## ✨️Introduction
 GHIT is a simple and easy toolkit for collecting, cleaning, and analyzing GitHub Issues.
 > [!IMPORTANT]
 > 
@@ -65,6 +65,7 @@ You can use LLMs to specifically analyze the issues.
 ## 🛠️TODO List
 - [ ] Implement batch processing for `run_collection`
 - [ ] use logging tools instead of `print`
+- [ ] support more LLMs (e.g., deepseek), especially using API service
 - [ ] test the System
 - [x] the config file needs to be refined
 - [x] Implement basic tools
