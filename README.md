@@ -1,6 +1,7 @@
 # GHIT (GitHub Issue Tools): A toolkit for GitHub Issues
 
-## Instructions
+## ✨️Instructions
+GHIT is a simple and easy toolkit for collecting, cleaning, and analyzing GitHub Issues.
 > [!IMPORTANT]
 > 
 > You should have GitHub [Personal Access Token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) because we use [graphql](https://docs.github.com/en/graphql) to crawl the issues.
@@ -18,7 +19,8 @@
 > ```bash
 > pip install -r requirements.txt
 >```
-#### Quick Start
+## 🌠Quick Start
+#### 📩Issue collection and cleaning
 ```bash
 # collect the github issues from one specific repo
 python main.py --repo_path pytorh/pytorch run_collection \
@@ -43,6 +45,7 @@ you can change the filter conditions in the code (so sry that this is a dirty op
 python main.py --config config/config.yaml data --processor counter --repo_name pytorch/pytorch
 ```
 
+#### 🔍️Issue analyzing
 > [!IMPORTANT]
 > 
 > After collecting the above issues, you can use the `analyzer` module (LLM-based) to analyze the issues.
@@ -59,23 +62,11 @@ python main.py --config config/config.yaml --repo_name pytorch/pytorch analyze
 After this step, you would get the results in `Results/{repo_name}/analyzer_results.csv`.  
 You can use LLMs to specifically analyze the issues.
 
-## TODO List
+## 🛠️TODO List
 - [ ] Implement batch processing for `run_collection`
 - [ ] use logging tools instead of `print`
+- [ ] test the System
 - [x] the config file needs to be refined
 - [x] Implement basic tools
 - [x] use LLM to analyze the issues
 
-
-## Project structure (ghit)
-* processors (the module crawling/cleaning/counting data information from GitHub Issues)
-  * tools
-* analyzer
-  * LDA
-  * LLM
-* utils
-
-
-#### Future
-- [x] implement LLM analyzer
-- [ ] test the System
