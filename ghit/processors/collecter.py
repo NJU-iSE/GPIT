@@ -28,7 +28,7 @@ class Collector:
     #     data, total_issue_count = get_response_data(self.url, self.query, self.headers, None)
     #     with open(self.to_file, mode='w', newline='', encoding='utf-8') as csvfile:
     #         writer = csv.writer(csvfile)
-    #         writer.writerow(["Title", "Body", "CreaDate", "Tags", "State", "Reactions",
+    #         writer.writerow(["Title", "Body", "CreatedDate", "Tags", "State", "Reactions",
     #                          "Comments", 'Link'])  # 添加 "Reactions" 和 "Comments" 列
     #
     #         issues = data["data"]["repository"]["issues"]
@@ -40,7 +40,7 @@ class Collector:
         start_col_time = time.time()
         with open(self.to_file, mode='w', newline='', encoding='utf-8') as csvfile:
             writer = csv.writer(csvfile)
-            writer.writerow(["Title", "Body", "Code", "CreaDate", "Tags", "State", "Reactions",
+            writer.writerow(["Title", "Body", "Code", "CreatedDate", "Tags", "State", "Reactions",
                              "Comments", 'Link'])  # 添加 "Reactions" 和 "Comments" 列
 
             # issues = self.data["data"]["repository"]["issues"]

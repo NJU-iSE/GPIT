@@ -23,8 +23,8 @@ class Counter:
         return df_sorted
 
     def draw_counts_by_year(self):
-        self.df["CreaDate"] = pd.to_datetime(self.df["CreaDate"], format='%Y-%m-%dT%H:%M:%SZ')
-        self.df["year"] = self.df["CreaDate"].dt.year
+        self.df["CreatedDate"] = pd.to_datetime(self.df["CreatedDate"], format='%Y-%m-%dT%H:%M:%SZ')
+        self.df["year"] = self.df["CreatedDate"].dt.year
 
         year_counts = self.df.groupby("year").size()
         year_counts = year_counts.sort_index()

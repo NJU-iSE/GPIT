@@ -47,8 +47,8 @@ class Pipeline(object):
         df = pd.read_csv(file_path)
 
         if years is not None:
-            df['CreaDate'] = pd.to_datetime(df['CreaDate'])
-            df["Year"] = df['CreaDate'].dt.year
+            df['CreatedDate'] = pd.to_datetime(df['CreatedDate'])
+            df["Year"] = df['CreatedDate'].dt.year
             if isinstance(years, str):
                 years = [years]
 
