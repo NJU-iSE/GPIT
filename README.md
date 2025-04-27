@@ -10,6 +10,8 @@ GPIT is a simple and easy toolkit for collecting, cleaning, and analyzing GitHub
 > - **LLM usage**:If you want to use LLM analyzer locally, make sure run the code in Linux (because we use vLLM to deploy LLMs)
 
 
+## 🌠Quick Start
+
 > [!Note] 
 > Before you start, clone the repo plz
 > ```bash
@@ -26,7 +28,8 @@ GPIT is a simple and easy toolkit for collecting, cleaning, and analyzing GitHub
 > ```bash
 > pip install -r requirements.txt
 >```
-## 🌠Quick Start
+
+
 #### 📩Data collection
 ```bash
 # collect the github issues from one specific repo
