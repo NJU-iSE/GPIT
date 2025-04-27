@@ -27,16 +27,18 @@ GPIT is a simple and easy toolkit for collecting, cleaning, and analyzing GitHub
 > pip install -r requirements.txt
 >```
 ## 🌠Quick Start
-#### 📩Issue collection and cleaning
+#### 📩Data collection
 ```bash
 # collect the github issues from one specific repo
 python main.py --repo_path pytorh/pytorch run_collection \
               --query_type issue
 ```
 above command can collect all the issues from the repo `pytorch/pytorch`.  
-Of course, you can collect issues from other repositories.  
-plz change the `${YOUR_ACCESS_TOKENS}` to your own access tokens  
-the results would be saved in `Results/{repo_name}/all_issues.csv`  
+Of course, you can collect issues from other repositories.
+Additionally, you can also collect Pull Requests by using `--query_type PR`. 
+the results would be saved in `Results/{repo_name}/all_{query_type}.csv`  
+
+#### 📩Data cleaning
 ```bash
 # filter the issues by the given conditions (cleaner)
 python main.py --repo_path pytorh/pytorch run_cleaning \
@@ -47,14 +49,11 @@ python main.py --repo_path pytorh/pytorch run_cleaning \
 the filter results would be saved in `Results/{repo_name}/cleaned_issues.csv`  
 you can change the filter conditions in the code (so sry that this is a dirty operation)
 
+#### 📊Data collection
 ```bash
 # count the issues by the given conditions (counter)
 python main.py --config config/config.yaml data --processor counter --repo_name pytorch/pytorch
 ```
-
-#### ⛓️PR collection
-
-
 
 #### 🔍️Issue analyzing (on building)
 > [!IMPORTANT]
@@ -74,11 +73,11 @@ After this step, you would get the results in `Results/{repo_name}/analyzer_resu
 You can use LLMs to specifically analyze the issues.
 
 ## 🛠️TODO List
-- [ ] Add support for collecting PRs like issues. 
 - [ ] Implement batch processing for `run_collection`
 - [ ] use logging tools instead of `print`
 - [ ] support more LLMs (e.g., deepseek), especially using API service
 - [ ] test the System
+- [x] Add support for collecting PRs like issues. 
 - [x] the config file needs to be refined
 - [x] Implement basic tools
 - [x] use LLM to analyze the issues
