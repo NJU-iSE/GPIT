@@ -7,8 +7,8 @@ from typing import Union, List
 from functools import reduce
 from pathlib import Path
 
-from ghit.utils.utils import load_config_file
-from ghit.processors import collecter, counter
+from gpit.utils.utils import load_config_file
+from gpit.processors import collecter, counter
 
 
 class Pipeline(object):
@@ -22,18 +22,36 @@ class Pipeline(object):
 
     def run_collection(
         self,
+        query_type,
         access_tokens,
     ):
-        query = self.config['query']["body"]
+        assert query_type in ["issue", "PR"], f"query_type must be 'query' or 'issues' but got {query_type}"
+        # TLDR@SHAOYU; Currently, PR query and issue query are compatible.
+        # Maybe PR query can be extended to include file changes.
+        if query_type == "issue":
+            query = self.config['query']["issue_query"]
+        elif query_type == "PR":
+            query = self.config['query']["pr_query"]
+
+
         variables = {
             "cursor": None,
             "owner": self.repo_path.split("/")[0],
             "name": self.repo_path.split("/")[1]
         }
-        cor = collecter.Collector(access_tokens, repos_name=self.repo_path, query=query, variables=variables,
-                                  to_file=f"Results/{self.repo_path.split('/')[-1]}/all_issues.csv")
+
+        if query_type == "issue":
+            cor = collecter.IssueCollector(access_tokens, repos_name=self.repo_path, query=query, variables=variables,
+                                  to_file=f"Results/{self.repo_path.split('/')[-1]}/all_{query_type}s.csv")
+        elif query_type == "PR":
+            cor = collecter.PRCollector(access_tokens, repos_name=self.repo_path, query=query, variables=variables,
+                                  to_file=f"Results/{self.repo_path.split('/')[-1]}/all_{query_type}s.csv")
+
+        cor.get_whole_data()
+
         print("collecter is initialized successfully")
-        cor.get_whole_issues()
+
+
 
     def run_cleaning(
         self,

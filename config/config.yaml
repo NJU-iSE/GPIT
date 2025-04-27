@@ -1,6 +1,6 @@
 # config.yaml
 query:
-  body: |
+  issue_query: |
     query GetIssues($cursor: String, $owner: String!, $name: String!) {
       repository(owner: $owner, name: $name) {
         issues(first: 100, after: $cursor) {
@@ -22,7 +22,37 @@ query:
         }
       }
     }
-
+  pr_query: |
+    query GetPullRequests($cursor: String, $owner: String!, $name: String!) {
+      repository(owner: $owner, name: $name) {
+        pullRequests(first: 100, after: $cursor) {
+          totalCount
+          nodes {
+            number 
+            title
+            body
+            createdAt
+            state
+            # PR-specific filed starts #
+            merged
+            mergedAt
+            baseRefName
+            headRefName
+            isDraft
+            # PR-specific filed ends #
+            labels(first: 100) { nodes { name } }
+            reactions { totalCount }
+            comments { totalCount }
+            # optional review information #
+            reviews(first: 1) { totalCount }
+          }
+          pageInfo {
+            hasNextPage
+            endCursor
+          }
+        }
+      }
+    }
 
 model:
   model_path: "Qwen/Qwen2.5-Coder-32B-Instruct"

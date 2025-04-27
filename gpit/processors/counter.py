@@ -1,5 +1,5 @@
 import pandas as pd
-from ghit.utils.utils import process_text, word_only, write_to_file, get_response_data, draw_line_chart
+from gpit.utils.utils import process_text, word_only, write_to_file, get_response_data, draw_line_chart
 
 
 class Counter:

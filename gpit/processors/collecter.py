@@ -1,8 +1,10 @@
 import os
-from ghit.utils.utils import write_to_file, get_response_data
+from abc import abstractmethod
+
+from gpit.utils.utils import write_to_file, get_response_data
 import csv
 import time
-from ghit.utils.logging import COL_LOG, ClE_LOG, COU_LOG, logging
+from gpit.utils.logging import COL_LOG, ClE_LOG, COU_LOG, logging
 
 
 
@@ -24,24 +26,34 @@ class Collector:
         if not os.path.exists(os.path.dirname(to_file)):
             os.makedirs(os.path.dirname(to_file))
 
-    # def get_one_page_issues(self):
-    #     data, total_issue_count = get_response_data(self.url, self.query, self.headers, None)
-    #     with open(self.to_file, mode='w', newline='', encoding='utf-8') as csvfile:
-    #         writer = csv.writer(csvfile)
-    #         writer.writerow(["Title", "Body", "CreatedDate", "Tags", "State", "Reactions",
-    #                          "Comments", 'Link'])  # 添加 "Reactions" 和 "Comments" 列
-    #
-    #         issues = data["data"]["repository"]["issues"]
-    #         all_issues = issues["nodes"]
-    #         write_to_file(all_issues, self.repos_name, writer)
-    #     return self
+    
+    @abstractmethod
+    def get_whole_data(self):
+        raise NotImplementedError
 
-    def get_whole_issues(self):
+    def get_open_issues(self):
+        raise NotImplemented
+
+    def get_close_issues(self):
+        raise NotImplemented
+
+
+class PRCollector(Collector):
+    def get_whole_data(self):
+        pass
+
+
+class IssueCollector(Collector):
+    def __init__(self, access_token, repos_name: str = None, query=None, variables=None, to_file=None,
+                 url="https://api.github.com/graphql", headers=None, **kwargs):
+        super().__init__(access_token, repos_name, query, variables, to_file, url, headers, **kwargs)
+
+    def get_whole_data(self):
         start_col_time = time.time()
         with open(self.to_file, mode='w', newline='', encoding='utf-8') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(["Title", "Body", "Code", "CreatedDate", "Tags", "State", "Reactions",
-                             "Comments", 'Link'])  # 添加 "Reactions" 和 "Comments" 列
+                             "Comments", 'Link'])  # Add "Reactions" 和 "Comments" column
 
             # issues = self.data["data"]["repository"]["issues"]
             # all_issues = issues["nodes"]
@@ -65,11 +77,4 @@ class Collector:
                 current_col_time = time.time()
                 col_time = current_col_time - start_col_time
                 COL_LOG.info(
-                    f"ghit have collected and wrote {issue_number} issues into csv! {collect_rate:.2%} completed! {col_time:.2}ms")
-        return self
-
-    def get_open_issues(self):
-        raise NotImplemented
-
-    def get_close_issues(self):
-        raise NotImplemented
+                    f"gpit have collected and wrote {issue_number} issues into csv! {collect_rate:.2%} completed! {col_time:.2}ms")

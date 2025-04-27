@@ -24,6 +24,7 @@ GPIT is a simple and easy toolkit for collecting, cleaning, and analyzing GitHub
 ```bash
 # collect the github issues from one specific repo
 python main.py --repo_path pytorh/pytorch run_collection \
+              --quesry_type issue \
               --access_tokens {YOUR_ACCESS_TOKENS}
 ```
 above command can collect all the issues from the repo `pytorch/pytorch`.  
@@ -45,7 +46,11 @@ you can change the filter conditions in the code (so sry that this is a dirty op
 python main.py --config config/config.yaml data --processor counter --repo_name pytorch/pytorch
 ```
 
-#### 🔍️Issue analyzing
+#### ⛓️PR collection
+
+
+
+#### 🔍️Issue analyzing (on building)
 > [!IMPORTANT]
 > 
 > After collecting the above issues, you can use the `analyzer` module (LLM-based) to analyze the issues.
