@@ -1,7 +1,7 @@
-# GHIT (GitHub Issue Tools): A toolkit for GitHub Issues
+# GPIT (*G*itHub *P*ull Request & *I*ssue *T*ools): A toolkit for GitHub Pull Request and Issues
 
 ## ✨️Introduction
-GHIT is a simple and easy toolkit for collecting, cleaning, and analyzing GitHub Issues.
+GPIT is a simple and easy toolkit for collecting, cleaning, and analyzing GitHub Pull Requests (PRs) and Issues.
 > [!IMPORTANT]
 > 
 > You should have GitHub [Personal Access Token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) because we use [graphql](https://docs.github.com/en/graphql) to crawl the issues.
@@ -63,6 +63,7 @@ After this step, you would get the results in `Results/{repo_name}/analyzer_resu
 You can use LLMs to specifically analyze the issues.
 
 ## 🛠️TODO List
+- [ ] Add support for collecting PRs like issues. 
 - [ ] Implement batch processing for `run_collection`
 - [ ] use logging tools instead of `print`
 - [ ] support more LLMs (e.g., deepseek), especially using API service
