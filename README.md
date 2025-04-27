@@ -34,8 +34,8 @@ python main.py --repo_path pytorh/pytorch run_collection \
               --query_type issue
 ```
 above command can collect all the issues from the repo `pytorch/pytorch`.  
-Of course, you can collect issues from other repositories.
-Additionally, you can also collect Pull Requests by using `--query_type PR`. 
+Of course, you can collect issues from other repositories.  
+Additionally, you can also collect Pull Requests by using `--query_type PR`.  
 the results would be saved in `Results/{repo_name}/all_{query_type}.csv`  
 
 #### 🧹Data cleaning
