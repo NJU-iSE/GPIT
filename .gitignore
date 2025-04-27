@@ -5,6 +5,8 @@ Results/
 
 # the passwds or tokens
 *key.txt
+pat.txt
+*token.txt
 *tokens.txt
 *passwd.txt
 

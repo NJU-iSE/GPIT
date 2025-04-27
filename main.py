@@ -15,16 +15,18 @@ class Pipeline(object):
     def __init__(
         self,
         repo_path=None,
-        config_file="config/config.yaml"
+        config_file="config/config.yaml",
+        github_pat_token_file="config/github_pat.txt"
     ):
         self.repo_path = repo_path
         self.config = load_config_file(config_file)
+        self.github_pat_token_file = github_pat_token_file
 
     def run_collection(
         self,
         query_type,
-        access_tokens,
     ):
+        access_tokens = Path(self.github_pat_token_file).read_text().strip()
         assert query_type in ["issue", "PR"], f"query_type must be 'query' or 'issues' but got {query_type}"
         # TLDR@SHAOYU; Currently, PR query and issue query are compatible.
         # Maybe PR query can be extended to include file changes.

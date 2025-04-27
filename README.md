@@ -2,19 +2,26 @@
 
 ## ✨️Introduction
 GPIT is a simple and easy toolkit for collecting, cleaning, and analyzing GitHub Pull Requests (PRs) and Issues.
-> [!IMPORTANT]
-> 
-> You should have GitHub [Personal Access Token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) because we use [graphql](https://docs.github.com/en/graphql) to crawl the issues.
 
 > [!WARNING]
-> 1. Make sure you have a good network connection to GitHub
-> 2. If you want to use LLM analyzer locally, make sure run the code in Linux (because we use [vLLM](https://github.com/vllm-project/vllm) to deploy LLMs)
+> **Precautions**
+> - **OS**: Recommend Ubuntu System;
+> - **Network**: Good Network to GitHub; 
+> - **LLM usage**:If you want to use LLM analyzer locally, make sure run the code in Linux (because we use vLLM to deploy LLMs)
+
 
 > [!Note] 
 > Before you start, clone the repo plz
 > ```bash
-> git clone https://github.com/NJU-iSE/GHIT.git
+> git clone https://github.com/NJU-iSE/GPIT.git
+> cd GPIT
 > ```
+> 
+> You should have GitHub [Personal Access Token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) because we use [graphql](https://docs.github.com/en/graphql) to crawl the issues.
+> ```bash
+>echo [YOUR_GITHUB_PAT] > config/github_pat.txt  # replace [YOUR_GITHUB_PAT] with your GitHub PAT
+>```
+>
 > then pip install the dependencies:
 > ```bash
 > pip install -r requirements.txt
@@ -24,8 +31,7 @@ GPIT is a simple and easy toolkit for collecting, cleaning, and analyzing GitHub
 ```bash
 # collect the github issues from one specific repo
 python main.py --repo_path pytorh/pytorch run_collection \
-              --quesry_type issue \
-              --access_tokens {YOUR_ACCESS_TOKENS}
+              --query_type issue
 ```
 above command can collect all the issues from the repo `pytorch/pytorch`.  
 Of course, you can collect issues from other repositories.  
