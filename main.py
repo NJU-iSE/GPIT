@@ -41,10 +41,10 @@ class Pipeline(object):
         }
 
         if query_type == "issue":
-            cor = collecter.IssueCollector(access_tokens, repos_name=self.repo_path, query=query, variables=variables,
+            cor = collecter.IssueCollector(access_tokens, repos_name=self.repo_path, query_type=query_type, query=query, variables=variables,
                                   to_file=f"Results/{self.repo_path.split('/')[-1]}/all_{query_type}s.csv")
         elif query_type == "PR":
-            cor = collecter.PRCollector(access_tokens, repos_name=self.repo_path, query=query, variables=variables,
+            cor = collecter.PRCollector(access_tokens, repos_name=self.repo_path, query_type=query_type, query=query, variables=variables,
                                   to_file=f"Results/{self.repo_path.split('/')[-1]}/all_{query_type}s.csv")
 
         cor.get_whole_data()

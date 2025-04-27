@@ -54,15 +54,11 @@ def word_only(intput_text: str, numbers: int):
     return output
 
 
-def write_to_file(all_issues, repos_name, writer):
+def write_to_file(all_items, query_type, repos_name, writer):
     # FIXME@SHAOYU: how to make the filter condition in config yaml?
-    for issue in all_issues:
-        # for item in issue:
-        #     print(item)
-        # print(issue['number'])
-        # print("https://github.com/pytorch/pytorch"+f"/issues/{issue['number']}")
-        title = issue['title']
-        body = issue['body']
+    for item in all_items:
+        title = item['title']
+        body = item['body']
         code = "\n".join(re.findall(r'```([\s\S]*?)```', body))
 
         body = body.replace('"', ' ')  # eliminate the "
@@ -80,24 +76,26 @@ def write_to_file(all_issues, repos_name, writer):
         # title = word_only(title, 300)
         # body = word_only(body, 300)
         # body = f'"{body}"'
-        created_at = issue['createdAt']
-        state = issue['state']
-        labels = ", ".join(label['name'] for label in issue['labels']['nodes'])
-        reactions_count = issue['reactions']['totalCount']  # get reactions count
-        comments_count = issue['comments']['totalCount']  # get comments count
+        created_at = item['createdAt']
+        state = item['state']
+        labels = ", ".join(label['name'] for label in item['labels']['nodes'])
+        reactions_count = item['reactions']['totalCount']  # get reactions count
+        comments_count = item['comments']['totalCount']  # get comments count
         repo_url = "https://github.com/" + repos_name
-        issue_id = issue['number']
-        issue_link = f"{repo_url}/issues/{issue_id}"
+        item_id = item['number']
+        item_type = "issues" if query_type=="issue" else "pull"
+        item_link = f"{repo_url}/{item_type}/{item_id}"
         writer.writerow([title, body, code, created_at, labels, state, reactions_count,
-                         comments_count, issue_link])  # write reactions and comments count to file
+                         comments_count, item_link])  # write reactions and comments count to file
 
 
-def get_response_data(url, query, headers, variables=None):
+def get_response_data(url, query, response_type, headers, variables=None):
+    response_type = "issues" if response_type == "issue" else "pullRequests"
     response = requests.post(url, json={"query": query, "variables": variables}, headers=headers)
     assert response.status_code == 200, f"{response}"  # set the assertion
     data = response.json()
-    total_issues_count = data["data"]["repository"]["issues"]["totalCount"]
-    return data, total_issues_count
+    total_items_count = data["data"]["repository"][f"{response_type}"]["totalCount"]
+    return data, total_items_count
 
 
 def draw_line_chart(title, x_label, y_label, x_data, y_data, save_path=None):
