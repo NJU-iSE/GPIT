@@ -45,6 +45,7 @@ the results would be saved in `Results/{repo_name}/all_{query_type}.csv`
 ```bash
 # filter the issues by the given conditions (cleaner)
 python main.py --repo_path pytorh/pytorch run_cleaning \
+              --query_type issue \
               --years [2020,2021,2022,2023,2024] \
               --tags "module: memory usage, high priority"  \
               --save_cols [Title,Tags,Link,Year]

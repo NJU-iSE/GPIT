@@ -57,16 +57,17 @@ class Pipeline(object):
 
     def run_cleaning(
         self,
+        query_type: str = None,
         years: Union[List[str], str] = None,
         tags: Union[List[str], str] = None,
         keywords: str = None,
         save_cols: List[str] = None,
-        res_name: str = "cleaned_issues.csv"
     ):
-        file_path = f"Results/{self.repo_path.split('/')[-1]}/all_issues.csv"
+        assert query_type in ["issue", "PR"], f"query_type must be 'query' or 'issues' but got {query_type}"
+        file_path = f"Results/{self.repo_path.split('/')[-1]}/all_{query_type}s.csv"
         df = pd.read_csv(file_path)
 
-        if years is not None:
+        if years is not None:  # FIXME@SHAOYU: the col name should not be replaced, maybe I should not use `Year`
             df['CreatedDate'] = pd.to_datetime(df['CreatedDate'])
             df["Year"] = df['CreatedDate'].dt.year
             if isinstance(years, str):
@@ -96,7 +97,7 @@ class Pipeline(object):
                 raise ValueError(f"no col names: {', '.join(missing_cols)}")
             df = df[save_cols]
 
-        df.to_csv(Path(file_path).parent / res_name, index=False)
+        df.to_csv(Path(file_path).parent / f"cleaned_{query_type}s.csv", index=False)
 
     def run_counting(
         self,
