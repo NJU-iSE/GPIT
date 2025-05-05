@@ -60,13 +60,13 @@ class Pipeline(object):
         query_type: str = None,
         years: Union[List[str], str] = None,
         tags: Union[List[str], str] = None,
-        keywords: str = None,
+        title_keywords: str = None,
+        body_keywords: str = None,
         save_cols: List[str] = None,
     ):
         assert query_type in ["issue", "PR"], f"query_type must be 'query' or 'issues' but got {query_type}"
         file_path = f"Results/{self.repo_path.split('/')[-1]}/all_{query_type}s.csv"
         df = pd.read_csv(file_path)
-
         if years is not None:  # FIXME@SHAOYU: the col name should not be replaced, maybe I should not use `Year`
             df['CreatedDate'] = pd.to_datetime(df['CreatedDate'])
             df["Year"] = df['CreatedDate'].dt.year
@@ -83,10 +83,17 @@ class Pipeline(object):
             df['Tags'] = df['Tags'].fillna('').apply(lambda x: x.split(', ') if x else [])
             df = df[df['Tags'].apply(lambda x: all(tag in x for tag in tags))]
 
-        if keywords is not None:
-            if isinstance(keywords, str):
-                keywords = [keywords]
-            pattern = re.compile('|'.join(keywords), re.IGNORECASE)
+
+        if title_keywords is not None:
+            if isinstance(title_keywords, str):
+                title_keywords = [title_keywords]
+            pattern = re.compile('|'.join(title_keywords), re.IGNORECASE)
+            df = df[df["Title"].fillna("").apply(lambda x: bool(pattern.search(x)))]
+
+        if body_keywords is not None:
+            if isinstance(body_keywords, str):
+                body_keywords = [body_keywords]
+            pattern = re.compile('|'.join(body_keywords), re.IGNORECASE)
             df = df[df["Body"].fillna("").apply(lambda x: bool(pattern.search(x)))]
 
         if save_cols is not None:
