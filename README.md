@@ -59,7 +59,7 @@ you can change the filter conditions in the code (so sry that this is a dirty op
 python main.py --config config/config.yaml data --processor counter --repo_name pytorch/pytorch
 ```
 
-#### 🔍️Issue analyzing (on building)
+#### 🔍️Issue analyzing (stay tuned)
 > [!IMPORTANT]
 > 
 > After collecting the above issues, you can use the `analyzer` module (LLM-based) to analyze the issues.
@@ -77,9 +77,9 @@ After this step, you would get the results in `Results/{repo_name}/analyzer_resu
 You can use LLMs to specifically analyze the issues.
 
 ## 🛠️TODO List
+- [ ] support more LLMs (e.g., deepseek), especially using API service
 - [ ] Implement batch processing for `run_collection`
 - [ ] use logging tools instead of `print`
-- [ ] support more LLMs (e.g., deepseek), especially using API service
 - [ ] test the System
 - [x] Add support for collecting PRs like issues. 
 - [x] the config file needs to be refined
