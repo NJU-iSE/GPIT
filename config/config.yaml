@@ -55,7 +55,7 @@ query:
     }
 
 model:
-  model_path: "Qwen/Qwen2.5-Coder-32B-Instruct"
+  model_path: "Qwen/Qwen3-MoE-15B-A2B"
   temperature: 1
   top_p: 0.8
   repetition_penalty: 1.05
