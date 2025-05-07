@@ -22,7 +22,7 @@ class Model:
                                               max_tokens=max_tokens)
         self.native_model = LLM(model=model_path, dtype="half", tensor_parallel_size=4)
 
-    def get_answer(self, system_content, prompt):
+    def get_output(self, system_content, prompt):
         message = [
             {"role": "system", "content": system_content},
             {"role": "user", "content": prompt}
@@ -35,7 +35,20 @@ class Model:
         return outputs
 
 
-class QwenModel (Model):
+class LocalModel(Model):
+    """
+    a class for managing the local model.
+    """
+    def __init__(self, model_path, engine_backend, temperature=0.7, top_p=0.8, repetition_penalty=1.05, max_tokens=512):
+        super().__init__(model_path, temperature, top_p, repetition_penalty, max_tokens)
+        self.engine_backend = engine_backend
+
+    def get_output(self, system_content, prompt):  # TODO@SHAOYU: Currently, I just need to implement get_output
+        pass
+
+
+
+class QwenModel(LocalModel):
     """
     a class for managing the Qwen model.
     """
