@@ -69,8 +69,8 @@ class SglangEngine(Engine):
 
 
 class VllmEngine(Engine):
-    def __init__(self, mode_path):
-        super().__init__(mode_path)
+    def __init__(self):
+        super().__init__()
 
 
 if __name__ == "__main__":
