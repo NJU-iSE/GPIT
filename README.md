@@ -1,4 +1,4 @@
-# GPIT (*G*itHub *P*ull Request & *I*ssue *T*ools): A toolkit for GitHub Pull Request and Issues
+# GPIT (*G*itHub *P*ull Request & *I*ssue *T*ools): A toolkit for GitHub Pull Requests and Issues
 
 ## ✨️Introduction
 GPIT is a simple and easy toolkit for collecting, cleaning, and analyzing GitHub Pull Requests (PRs) and Issues.
@@ -62,7 +62,7 @@ python main.py --config config/config.yaml data --processor counter --repo_name 
 #### 🔍️Issue analyzing (stay tuned)
 > [!IMPORTANT]
 > 
-> After collecting the above issues, you can use the `analyzer` module (LLM-based) to analyze the issues.
+> After collecting the above issues, you can use the `analyzer` module (LLM-based) to analyze the issues. currently, we use local inference engines to deploy systems.
 
 > [!WARNING]
 > 

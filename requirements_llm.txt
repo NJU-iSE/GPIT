@@ -1,3 +1,4 @@
 transformers>=4.50.0
+vllm>=0.8.5
 sglang[all]>=0.4.6.post1
 huggingface-hub~=0.26.2
