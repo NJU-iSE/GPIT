@@ -89,11 +89,11 @@ class VllmEngine(Engine):
         )
         return import_strings
 
-    def load_model(self, model_path, dtype, tensor_parallel_size, gpu_memory_utilization):
+    def load_model(self, model_path, dtype, tensor_parallel_size, gpu_memory_utilization, enable_chunked_prefill):
         load_strings = textwrap.dedent(
         f"""
         tokenizer = AutoTokenizer.from_pretrained("{model_path}")
-        llm = LLM(model="{model_path}", dtype="{dtype}", tensor_parallel_size={tensor_parallel_size}, gpu_memory_utilization={gpu_memory_utilization})
+        llm = LLM(model="{model_path}", dtype="{dtype}", tensor_parallel_size={tensor_parallel_size}, gpu_memory_utilization={gpu_memory_utilization}, enable_chunked_prefill={enable_chunked_prefill})
         """
         )
         return load_strings
@@ -143,8 +143,9 @@ class VllmEngine(Engine):
 if __name__ == "__main__":
     vllm_engine = VllmEngine()
     import_code = vllm_engine.import_engine
-    model_loading_code = vllm_engine.load_model(model_path="Qwen/Qwen3-4B-Base", dtype="half", tensor_parallel_size=4, gpu_memory_utilization=0.7)
-    sampling_params_code = vllm_engine.init_sampling_params(temperature=0.6, top_p=0.95, repetition_penalty=1.0, max_tokens=32768)
+    # dtype uses `float32`, refer to https://github.com/vllm-project/vllm/issues/17578#issuecomment-2849401877
+    model_loading_code = vllm_engine.load_model(model_path="Qwen/Qwen3-1.7B", dtype="float16", tensor_parallel_size=4, gpu_memory_utilization=0.7, enable_chunked_prefill=False)
+    sampling_params_code = vllm_engine.init_sampling_params(temperature=0.6, top_p=0.95, repetition_penalty=1.0, max_tokens=4096)
     prompt_code = vllm_engine.init_prompt("hello, who you are?")
     output_code = vllm_engine.get_output(num=1)
     complete_code = import_code + model_loading_code + prompt_code + sampling_params_code + output_code
