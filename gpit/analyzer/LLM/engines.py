@@ -2,12 +2,13 @@
 @SHAOYU: in this file, I need to implement template code generation for inference engines.
 """
 import textwrap
+from abc import abstractmethod, ABCMeta
 from typing import List
 from pathlib import Path
 
 
 
-class Engine:
+class Engine(metaclass=ABCMeta):  # FIXME@SHAOYU: need to further investigate the ABCMeatClass
     def __init__(self):  # TODO@SHAOYU: add some necessary parameters for engines. In this way, we can modify the method from static into dynamic
         pass
 
@@ -15,6 +16,7 @@ class Engine:
     def import_engine(self):
         raise NotImplementedError
 
+    @abstractmethod
     def load_model(self, model_path):
         raise NotImplementedError
 
@@ -87,11 +89,11 @@ class VllmEngine(Engine):
         )
         return import_strings
 
-    def load_model(self, model_path, dtype, tensor_parallel_size):
+    def load_model(self, model_path, dtype, tensor_parallel_size, gpu_memory_utilization):
         load_strings = textwrap.dedent(
         f"""
         tokenizer = AutoTokenizer.from_pretrained("{model_path}")
-        llm = LLM(model="{model_path}", dtype="{dtype}", tensor_parallel_size={tensor_parallel_size})
+        llm = LLM(model="{model_path}", dtype="{dtype}", tensor_parallel_size={tensor_parallel_size}, gpu_memory_utilization={gpu_memory_utilization})
         """
         )
         return load_strings
@@ -141,7 +143,7 @@ class VllmEngine(Engine):
 if __name__ == "__main__":
     vllm_engine = VllmEngine()
     import_code = vllm_engine.import_engine
-    model_loading_code = vllm_engine.load_model(model_path="Qwen/Qwen3-4B-Base", dtype="half", tensor_parallel_size=4)
+    model_loading_code = vllm_engine.load_model(model_path="Qwen/Qwen3-4B-Base", dtype="half", tensor_parallel_size=4, gpu_memory_utilization=0.7)
     sampling_params_code = vllm_engine.init_sampling_params(temperature=0.6, top_p=0.95, repetition_penalty=1.0, max_tokens=32768)
     prompt_code = vllm_engine.init_prompt("hello, who you are?")
     output_code = vllm_engine.get_output(num=1)
