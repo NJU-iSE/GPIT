@@ -11,54 +11,54 @@ from typing import Union
 
 def infer(engine: Engine, prompts: str, model: Union[str, InferenceConfig], **kwargs):
     """
-    使用engine实例生成模板化代码，启动子进程进行推理并返回结果
+    Generate templated code using engine instance, start subprocess for inference and return results
     
     Args:
-        engine: 实例化的Engine对象 (VllmEngine或SglangEngine)
-        prompts: 输入的提示词
-        model: 模型路径/名称或InferenceConfig对象，或配置名称
-        **kwargs: 其他推理参数，会覆盖配置中的参数
+        engine: Instantiated Engine object (VllmEngine or SglangEngine)
+        prompts: Input prompts
+        model: Model path/name or InferenceConfig object, or config name
+        **kwargs: Other inference parameters that will override config parameters
     
     Returns:
-        str: 推理生成的文本结果
+        str: Generated text result from inference
     """
     
-    # 处理配置参数
+    # Process configuration parameters
     if isinstance(model, InferenceConfig):
         config = model
         model_path = config.model_path
     elif isinstance(model, str):
         if model.startswith("/") or model.startswith("./") or "/" in model:
-            # 如果是路径，创建默认配置
+            # If it's a path, create default config
             config = InferenceConfig(model_path=model)
             model_path = model
         else:
-            # 如果是配置名称，加载配置
+            # If it's a config name, load config
             config = load_inference_config(model)
             model_path = config.model_path
     else:
-        raise ValueError("model 参数必须是字符串(路径或配置名称)或InferenceConfig对象")
+        raise ValueError("model parameter must be a string (path or config name) or InferenceConfig object")
     
-    # 用kwargs覆盖配置中的参数
+    # Override config parameters with kwargs
     temperature = kwargs.get('temperature', config.temperature)
     top_p = kwargs.get('top_p', config.top_p)
     repetition_penalty = kwargs.get('repetition_penalty', config.repetition_penalty)
     max_tokens = kwargs.get('max_tokens', config.max_tokens)
     timeout = kwargs.get('timeout', config.timeout)
     
-    # 生成完整的推理代码
+    # Generate complete inference code
     complete_code = generate_inference_code(
         engine, prompts, model_path, config,
         temperature, top_p, repetition_penalty, max_tokens
     )
     
-    # 创建临时文件并写入代码
+    # Create temporary file and write code
     with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as temp_file:
         temp_file.write(complete_code)
         temp_file_path = temp_file.name
     
     try:
-        # 启动子进程执行代码
+        # Start subprocess to execute code
         result = subprocess.run(
             ['python', temp_file_path],
             capture_output=True,
@@ -67,25 +67,25 @@ def infer(engine: Engine, prompts: str, model: Union[str, InferenceConfig], **kw
         )
         
         if result.returncode != 0:
-            raise RuntimeError(f"推理过程出错: {result.stderr}")
+            raise RuntimeError(f"Inference process error: {result.stderr}")
         
-        # 解析输出结果
+        # Parse output results
         output = parse_inference_output(result.stdout)
         return output
         
     finally:
-        # 清理临时文件
+        # Clean up temporary file
         os.unlink(temp_file_path)
 
 
 def generate_inference_code(engine, prompts, model_path, config, temperature, top_p, repetition_penalty, max_tokens):
     """
-    根据engine类型生成完整的推理代码
+    Generate complete inference code based on engine type
     """
     import_code = engine.import_engine
     
     if isinstance(engine, VllmEngine):
-        # VllmEngine代码生成 - 使用配置中的参数
+        # VllmEngine code generation - use parameters from config
         model_loading_code = engine.load_model(
             model_path=model_path,
             dtype=config.dtype,
@@ -99,9 +99,9 @@ def generate_inference_code(engine, prompts, model_path, config, temperature, to
         prompt_code = engine.init_prompt(prompts)
         output_code = engine.get_output(num=1)
         
-        # 添加结果输出代码
+        # Add result output code
         result_output_code = """
-# 输出结果到标准输出，用于解析
+# Output results to stdout for parsing
 print("INFERENCE_RESULT_START")
 for result in output_list:
     print(result)
@@ -109,7 +109,7 @@ print("INFERENCE_RESULT_END")
         """
         
     elif isinstance(engine, SglangEngine):
-        # SglangEngine代码生成
+        # SglangEngine code generation
         model_loading_code = engine.load_model(model_path)
         sampling_params_code = engine.init_sampling_params(
             temperature, top_p, repetition_penalty, max_tokens
@@ -117,18 +117,18 @@ print("INFERENCE_RESULT_END")
         prompt_code = engine.init_prompt([prompts])
         output_code = engine.get_output_code("prompts", "sampling_params")
         
-        # 添加结果输出代码
+        # Add result output code
         result_output_code = """
-# 输出结果到标准输出，用于解析
+# Output results to stdout for parsing
 print("INFERENCE_RESULT_START")
 for prompt, output in zip(prompts, outputs):
     print(output['text'])
 print("INFERENCE_RESULT_END")
         """
     else:
-        raise ValueError(f"不支持的engine类型: {type(engine)}")
+        raise ValueError(f"Unsupported engine type: {type(engine)}")
     
-    # 组合完整代码
+    # Combine complete code
     complete_code = (
         import_code + "\n" +
         model_loading_code + "\n" +
@@ -143,11 +143,11 @@ print("INFERENCE_RESULT_END")
 
 def parse_inference_output(stdout):
     """
-    解析子进程的标准输出，提取推理结果
+    Parse subprocess stdout and extract inference results
     """
     lines = stdout.strip().split('\n')
     
-    # 查找结果标记
+    # Find result markers
     start_idx = None
     end_idx = None
     
@@ -162,25 +162,25 @@ def parse_inference_output(stdout):
         result_lines = lines[start_idx:end_idx]
         return '\n'.join(result_lines).strip()
     else:
-        # 如果没有找到标记，尝试从输出中提取最后的生成文本
+        # If markers not found, try to extract last generated text from output
         for line in reversed(lines):
             if line.strip() and not line.startswith("Generated text:"):
                 return line.strip()
-        return "未找到推理结果"
+        return "Inference result not found"
 
 
 def infer_with_config(engine: Engine, prompts: str, config_name: str = "qwen_small", **kwargs):
     """
-    使用配置名称进行推理的便捷函数
+    Convenient function for inference using config name
     
     Args:
-        engine: Engine实例
-        prompts: 输入提示词
-        config_name: 配置名称
-        **kwargs: 覆盖配置的参数
+        engine: Engine instance
+        prompts: Input prompts
+        config_name: Configuration name
+        **kwargs: Parameters to override config
     
     Returns:
-        str: 推理结果
+        str: Inference result
     """
     return infer(engine, prompts, config_name, **kwargs)
 
@@ -188,34 +188,34 @@ def infer_with_config(engine: Engine, prompts: str, config_name: str = "qwen_sma
 if __name__ == "__main__":
     vllm_engine = VllmEngine()
     
-    # 测试使用配置名称推理
-    print("使用配置名称推理:")
+    # Test inference using config name
+    print("Testing inference with config name:")
     result1 = infer(
         engine=vllm_engine, 
-        prompts="你好，你是谁？", 
+        prompts="Hello, who are you?", 
         model="qwen_small"
     )
-    print(f"结果1: {result1}")
+    print(f"Result 1: {result1}")
     
-    # 测试使用直接路径推理
-    print("\n使用直接路径推理:")
+    # Test inference using direct path
+    print("\nTesting inference with direct path:")
     result2 = infer(
         engine=vllm_engine, 
-        prompts="你好，你是谁？", 
+        prompts="Hello, who are you?", 
         model="Qwen/Qwen3-1.7B",
         temperature=0.7,
         max_tokens=100
     )
-    print(f"结果2: {result2}")
+    print(f"Result 2: {result2}")
     
-    # 测试使用配置对象推理
-    print("\n使用配置对象推理:")
+    # Test inference using config object
+    print("\nTesting inference with config object:")
     from inference_config import load_inference_config
     config = load_inference_config("creative_mode")
     result3 = infer(
         engine=vllm_engine,
-        prompts="写一首关于春天的短诗",
+        prompts="Write a short poem about spring",
         model=config
     )
-    print(f"结果3: {result3}")
+    print(f"Result 3: {result3}")
 

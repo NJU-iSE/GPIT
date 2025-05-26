@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-推理函数使用示例
-演示如何使用不同的engine进行模型推理
+Inference function usage examples
+Demonstrates how to use different engines for model inference
 """
 
 from engines import VllmEngine, SglangEngine
@@ -9,28 +9,28 @@ from inference import infer
 import time
 import logging
 
-# 设置日志
+# Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 
 def example_vllm_inference():
-    """使用VllmEngine进行推理的示例"""
-    logger.info("开始VllmEngine推理示例...")
+    """Example of using VllmEngine for inference"""
+    logger.info("Starting VllmEngine inference example...")
     
-    # 创建VllmEngine实例
+    # Create VllmEngine instance
     vllm_engine = VllmEngine()
     
-    # 定义测试用例
+    # Define test cases
     test_cases = [
         {
-            "prompts": "你好，请介绍一下你自己。",
+            "prompts": "Hello, please introduce yourself.",
             "model": "Qwen/Qwen3-1.7B",
             "temperature": 0.7,
             "max_tokens": 100
         },
         {
-            "prompts": "请解释什么是人工智能。",
+            "prompts": "Please explain what artificial intelligence is.",
             "model": "Qwen/Qwen3-1.7B", 
             "temperature": 0.5,
             "max_tokens": 200
@@ -38,8 +38,8 @@ def example_vllm_inference():
     ]
     
     for i, test_case in enumerate(test_cases, 1):
-        logger.info(f"执行测试用例 {i}...")
-        logger.info(f"输入: {test_case['prompts']}")
+        logger.info(f"Executing test case {i}...")
+        logger.info(f"Input: {test_case['prompts']}")
         
         start_time = time.time()
         try:
@@ -52,31 +52,31 @@ def example_vllm_inference():
             )
             
             end_time = time.time()
-            logger.info(f"推理完成，耗时: {end_time - start_time:.2f}秒")
-            logger.info(f"输出: {result}")
+            logger.info(f"Inference completed, time elapsed: {end_time - start_time:.2f} seconds")
+            logger.info(f"Output: {result}")
             print("-" * 50)
             
         except Exception as e:
-            logger.error(f"推理失败: {str(e)}")
+            logger.error(f"Inference failed: {str(e)}")
             print("-" * 50)
 
 
 def example_sglang_inference():
-    """使用SglangEngine进行推理的示例"""
-    logger.info("开始SglangEngine推理示例...")
+    """Example of using SglangEngine for inference"""
+    logger.info("Starting SglangEngine inference example...")
     
-    # 创建SglangEngine实例
+    # Create SglangEngine instance
     sglang_engine = SglangEngine()
     
-    # 定义测试用例
+    # Define test case
     test_case = {
-        "prompts": "写一首关于春天的诗。",
+        "prompts": "Write a poem about spring.",
         "model": "Qwen/Qwen3-1.7B",
         "temperature": 0.8,
         "max_tokens": 150
     }
     
-    logger.info(f"输入: {test_case['prompts']}")
+    logger.info(f"Input: {test_case['prompts']}")
     
     start_time = time.time()
     try:
@@ -89,23 +89,23 @@ def example_sglang_inference():
         )
         
         end_time = time.time()
-        logger.info(f"推理完成，耗时: {end_time - start_time:.2f}秒")
-        logger.info(f"输出: {result}")
+        logger.info(f"Inference completed, time elapsed: {end_time - start_time:.2f} seconds")
+        logger.info(f"Output: {result}")
         
     except Exception as e:
-        logger.error(f"推理失败: {str(e)}")
+        logger.error(f"Inference failed: {str(e)}")
 
 
 def batch_inference_example():
-    """批量推理示例"""
-    logger.info("开始批量推理示例...")
+    """Batch inference example"""
+    logger.info("Starting batch inference example...")
     
     vllm_engine = VllmEngine()
     
     prompts_list = [
-        "什么是机器学习？",
-        "解释深度学习的基本概念。",
-        "Python有哪些优势？"
+        "What is machine learning?",
+        "Explain the basic concepts of deep learning.",
+        "What are the advantages of Python?"
     ]
     
     results = []
@@ -119,45 +119,45 @@ def batch_inference_example():
                 max_tokens=100
             )
             results.append({"prompt": prompt, "result": result, "status": "success"})
-            logger.info(f"完成推理: {prompt[:20]}...")
+            logger.info(f"Completed inference: {prompt[:20]}...")
             
         except Exception as e:
             results.append({"prompt": prompt, "result": str(e), "status": "failed"})
-            logger.error(f"推理失败: {prompt[:20]}... - {str(e)}")
+            logger.error(f"Inference failed: {prompt[:20]}... - {str(e)}")
     
-    # 输出批量推理结果
-    logger.info("批量推理结果汇总:")
+    # Output batch inference results
+    logger.info("Batch inference results summary:")
     for i, result in enumerate(results, 1):
-        print(f"\n{i}. 提示词: {result['prompt']}")
-        print(f"   状态: {result['status']}")
-        print(f"   结果: {result['result'][:100]}..." if len(result['result']) > 100 else f"   结果: {result['result']}")
+        print(f"\n{i}. Prompt: {result['prompt']}")
+        print(f"   Status: {result['status']}")
+        print(f"   Result: {result['result'][:100]}..." if len(result['result']) > 100 else f"   Result: {result['result']}")
 
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("推理函数使用示例")
+    print("Inference Function Usage Examples")
     print("=" * 60)
     
-    # 运行VllmEngine示例
+    # Run VllmEngine example
     try:
         example_vllm_inference()
     except Exception as e:
-        logger.error(f"VllmEngine示例执行失败: {str(e)}")
+        logger.error(f"VllmEngine example execution failed: {str(e)}")
     
     print("\n" + "=" * 60)
     
-    # 运行SglangEngine示例
+    # Run SglangEngine example
     try:
         example_sglang_inference()
     except Exception as e:
-        logger.error(f"SglangEngine示例执行失败: {str(e)}")
+        logger.error(f"SglangEngine example execution failed: {str(e)}")
     
     print("\n" + "=" * 60)
     
-    # 运行批量推理示例
+    # Run batch inference example
     try:
         batch_inference_example()
     except Exception as e:
-        logger.error(f"批量推理示例执行失败: {str(e)}")
+        logger.error(f"Batch inference example execution failed: {str(e)}")
     
-    print("\n推理示例完成!") 
+    print("\nInference examples completed!") 

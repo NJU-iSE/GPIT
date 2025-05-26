@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-推理系统启动脚本
-提供命令行界面来使用推理系统
+Inference system startup script
+Provides command line interface to use the inference system
 """
 
 import argparse
@@ -14,20 +14,20 @@ from inference_config import config_manager, load_inference_config
 
 def main():
     parser = argparse.ArgumentParser(
-        description="大语言模型推理系统",
+        description="Large Language Model Inference System",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-使用示例:
-  # 使用预定义配置
-  python run_inference.py -e vllm -m qwen_small -p "你好，你是谁？"
+Usage examples:
+  # Use predefined config
+  python run_inference.py -e vllm -m qwen_small -p "Hello, who are you?"
   
-  # 使用自定义参数
-  python run_inference.py -e vllm -m "Qwen/Qwen3-1.7B" -p "解释机器学习" --temperature 0.8 --max-tokens 200
+  # Use custom parameters
+  python run_inference.py -e vllm -m "Qwen/Qwen3-1.7B" -p "Explain machine learning" --temperature 0.8 --max-tokens 200
   
-  # 列出可用配置
+  # List available configs
   python run_inference.py --list-configs
   
-  # 交互模式
+  # Interactive mode
   python run_inference.py -e vllm -m qwen_small --interactive
         """
     )
@@ -35,70 +35,70 @@ def main():
     parser.add_argument('-e', '--engine', 
                        choices=['vllm', 'sglang'], 
                        default='vllm',
-                       help='推理引擎类型 (默认: vllm)')
+                       help='Inference engine type (default: vllm)')
     
     parser.add_argument('-m', '--model',
-                       help='模型路径或配置名称')
+                       help='Model path or configuration name')
     
     parser.add_argument('-p', '--prompt',
-                       help='输入提示词')
+                       help='Input prompt')
     
     parser.add_argument('--temperature', type=float,
-                       help='采样温度 (0.0-2.0)')
+                       help='Sampling temperature (0.0-2.0)')
     
     parser.add_argument('--top-p', type=float,
-                       help='核采样参数 (0.0-1.0)')
+                       help='Nucleus sampling parameter (0.0-1.0)')
     
     parser.add_argument('--max-tokens', type=int,
-                       help='最大生成长度')
+                       help='Maximum generation length')
     
     parser.add_argument('--repetition-penalty', type=float,
-                       help='重复惩罚 (1.0为无惩罚)')
+                       help='Repetition penalty (1.0 for no penalty)')
     
     parser.add_argument('--timeout', type=int,
-                       help='推理超时时间(秒)')
+                       help='Inference timeout in seconds')
     
     parser.add_argument('--list-configs', action='store_true',
-                       help='列出所有可用配置')
+                       help='List all available configurations')
     
     parser.add_argument('--interactive', action='store_true',
-                       help='进入交互模式')
+                       help='Enter interactive mode')
     
     parser.add_argument('--verbose', action='store_true',
-                       help='详细输出')
+                       help='Verbose output')
     
     args = parser.parse_args()
     
-    # 列出配置
+    # List configurations
     if args.list_configs:
-        print("可用的推理配置:")
+        print("Available inference configurations:")
         configs = config_manager.list_configs()
         for name, source in configs.items():
             config = config_manager.get_config(name)
             print(f"  {name:15} ({source:10}): {config.model_path}")
             if args.verbose:
-                print(f"    - 温度: {config.temperature}")
-                print(f"    - 最大长度: {config.max_tokens}")
-                print(f"    - GPU并行: {config.tensor_parallel_size}")
+                print(f"    - Temperature: {config.temperature}")
+                print(f"    - Max length: {config.max_tokens}")
+                print(f"    - GPU parallel: {config.tensor_parallel_size}")
         return
     
-    # 检查必要参数
+    # Check required parameters
     if not args.model:
-        print("错误: 必须指定模型 (-m/--model)")
+        print("Error: Must specify model (-m/--model)")
         sys.exit(1)
     
-    # 创建引擎
+    # Create engine
     if args.engine == 'vllm':
         engine = VllmEngine()
     elif args.engine == 'sglang':
         engine = SglangEngine()
     else:
-        print(f"错误: 不支持的引擎类型 {args.engine}")
+        print(f"Error: Unsupported engine type {args.engine}")
         sys.exit(1)
     
-    print(f"使用 {args.engine.upper()} 引擎，模型: {args.model}")
+    print(f"Using {args.engine.upper()} engine, model: {args.model}")
     
-    # 准备推理参数
+    # Prepare inference parameters
     kwargs = {}
     if args.temperature is not None:
         kwargs['temperature'] = args.temperature
@@ -111,23 +111,23 @@ def main():
     if args.timeout is not None:
         kwargs['timeout'] = args.timeout
     
-    # 交互模式
+    # Interactive mode
     if args.interactive:
-        print("\n进入交互模式 (输入 'quit' 或 'exit' 退出)")
+        print("\nEntering interactive mode (type 'quit' or 'exit' to exit)")
         print("-" * 50)
         
         while True:
             try:
-                prompt = input("\n请输入您的问题: ").strip()
+                prompt = input("\nPlease enter your question: ").strip()
                 
-                if prompt.lower() in ['quit', 'exit', '退出']:
-                    print("再见！")
+                if prompt.lower() in ['quit', 'exit']:
+                    print("Goodbye!")
                     break
                 
                 if not prompt:
                     continue
                 
-                print(f"\n正在推理... (引擎: {args.engine})")
+                print(f"\nInferring... (engine: {args.engine})")
                 start_time = time.time()
                 
                 result = infer(
@@ -139,32 +139,32 @@ def main():
                 
                 end_time = time.time()
                 
-                print(f"\n回答 (耗时: {end_time - start_time:.2f}秒):")
+                print(f"\nAnswer (time elapsed: {end_time - start_time:.2f} seconds):")
                 print("-" * 30)
                 print(result)
                 print("-" * 30)
                 
             except KeyboardInterrupt:
-                print("\n\n用户中断，退出...")
+                print("\n\nUser interrupted, exiting...")
                 break
             except Exception as e:
-                print(f"\n错误: {e}")
+                print(f"\nError: {e}")
                 if args.verbose:
                     import traceback
                     traceback.print_exc()
     
-    # 单次推理模式
+    # Single inference mode
     else:
         if not args.prompt:
-            print("错误: 必须指定提示词 (-p/--prompt)")
+            print("Error: Must specify prompt (-p/--prompt)")
             sys.exit(1)
         
-        print(f"提示词: {args.prompt}")
+        print(f"Prompt: {args.prompt}")
         if kwargs:
-            print(f"参数: {kwargs}")
+            print(f"Parameters: {kwargs}")
         
         try:
-            print("\n正在推理...")
+            print("\nInferring...")
             start_time = time.time()
             
             result = infer(
@@ -176,13 +176,13 @@ def main():
             
             end_time = time.time()
             
-            print(f"\n推理结果 (耗时: {end_time - start_time:.2f}秒):")
+            print(f"\nInference result (time elapsed: {end_time - start_time:.2f} seconds):")
             print("=" * 50)
             print(result)
             print("=" * 50)
             
         except Exception as e:
-            print(f"推理失败: {e}")
+            print(f"Inference failed: {e}")
             if args.verbose:
                 import traceback
                 traceback.print_exc()

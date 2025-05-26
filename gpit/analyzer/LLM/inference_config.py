@@ -1,6 +1,6 @@
 """
-推理配置文件
-用于管理不同模型的推理参数和设置
+Inference configuration file
+For managing inference parameters and settings for different models
 """
 
 from dataclasses import dataclass
@@ -11,7 +11,7 @@ import os
 
 @dataclass
 class InferenceConfig:
-    """推理配置类"""
+    """Inference configuration class"""
     model_path: str
     temperature: float = 0.6
     top_p: float = 0.95
@@ -21,10 +21,10 @@ class InferenceConfig:
     tensor_parallel_size: int = 1
     gpu_memory_utilization: float = 0.7
     enable_chunked_prefill: bool = False
-    timeout: int = 300  # 子进程超时时间（秒）
+    timeout: int = 300  # Subprocess timeout in seconds
     
     def to_dict(self) -> Dict[str, Any]:
-        """转换为字典格式"""
+        """Convert to dictionary format"""
         return {
             "model_path": self.model_path,
             "temperature": self.temperature,
@@ -40,24 +40,24 @@ class InferenceConfig:
     
     @classmethod
     def from_dict(cls, config_dict: Dict[str, Any]) -> 'InferenceConfig':
-        """从字典创建配置对象"""
+        """Create config object from dictionary"""
         return cls(**config_dict)
     
     def save_to_file(self, filepath: str):
-        """保存配置到文件"""
+        """Save configuration to file"""
         with open(filepath, 'w', encoding='utf-8') as f:
             json.dump(self.to_dict(), f, ensure_ascii=False, indent=2)
     
     @classmethod
     def load_from_file(cls, filepath: str) -> 'InferenceConfig':
-        """从文件加载配置"""
+        """Load configuration from file"""
         with open(filepath, 'r', encoding='utf-8') as f:
             config_dict = json.load(f)
         return cls.from_dict(config_dict)
 
 
 class ConfigManager:
-    """配置管理器"""
+    """Configuration manager"""
     
     def __init__(self, config_dir: str = "./configs"):
         self.config_dir = config_dir
@@ -65,7 +65,7 @@ class ConfigManager:
         self._predefined_configs = self._create_predefined_configs()
     
     def _create_predefined_configs(self) -> Dict[str, InferenceConfig]:
-        """创建预定义的配置"""
+        """Create predefined configurations"""
         configs = {
             "qwen_small": InferenceConfig(
                 model_path="Qwen/Qwen3-1.7B",
@@ -106,12 +106,12 @@ class ConfigManager:
         return configs
     
     def get_config(self, config_name: str) -> Optional[InferenceConfig]:
-        """获取配置"""
-        # 首先检查预定义配置
+        """Get configuration"""
+        # First check predefined configs
         if config_name in self._predefined_configs:
             return self._predefined_configs[config_name]
         
-        # 然后检查文件配置
+        # Then check file configs
         config_file = os.path.join(self.config_dir, f"{config_name}.json")
         if os.path.exists(config_file):
             return InferenceConfig.load_from_file(config_file)
@@ -119,34 +119,34 @@ class ConfigManager:
         return None
     
     def save_config(self, config_name: str, config: InferenceConfig):
-        """保存配置"""
+        """Save configuration"""
         config_file = os.path.join(self.config_dir, f"{config_name}.json")
         config.save_to_file(config_file)
     
     def list_configs(self) -> Dict[str, str]:
-        """列出所有可用的配置"""
+        """List all available configurations"""
         configs = {}
         
-        # 添加预定义配置
+        # Add predefined configs
         for name in self._predefined_configs:
             configs[name] = "predefined"
         
-        # 添加文件配置
+        # Add file configs
         if os.path.exists(self.config_dir):
             for filename in os.listdir(self.config_dir):
                 if filename.endswith('.json'):
-                    name = filename[:-5]  # 移除.json后缀
+                    name = filename[:-5]  # Remove .json suffix
                     configs[name] = "file"
         
         return configs
     
     def create_config_from_template(self, template_name: str, new_name: str, **overrides) -> InferenceConfig:
-        """基于模板创建新配置"""
+        """Create new configuration based on template"""
         template_config = self.get_config(template_name)
         if template_config is None:
-            raise ValueError(f"模板配置 '{template_name}' 不存在")
+            raise ValueError(f"Template configuration '{template_name}' does not exist")
         
-        # 创建新配置，应用覆盖参数
+        # Create new config with override parameters
         config_dict = template_config.to_dict()
         config_dict.update(overrides)
         
@@ -156,34 +156,34 @@ class ConfigManager:
         return new_config
 
 
-# 全局配置管理器实例
+# Global config manager instance
 config_manager = ConfigManager()
 
 
 def load_inference_config(config_name: str = "qwen_small") -> InferenceConfig:
-    """加载推理配置的便捷函数"""
+    """Convenient function to load inference configuration"""
     config = config_manager.get_config(config_name)
     if config is None:
-        print(f"警告: 配置 '{config_name}' 不存在，使用默认配置")
+        print(f"Warning: Configuration '{config_name}' does not exist, using default configuration")
         return config_manager.get_config("qwen_small")
     return config
 
 
 if __name__ == "__main__":
-    # 演示配置管理器的使用
-    print("可用的配置:")
+    # Demonstrate config manager usage
+    print("Available configurations:")
     configs = config_manager.list_configs()
     for name, source in configs.items():
         config = config_manager.get_config(name)
         print(f"  {name} ({source}): {config.model_path}, temp={config.temperature}")
     
-    print("\n创建自定义配置:")
+    print("\nCreating custom configuration:")
     custom_config = config_manager.create_config_from_template(
         "qwen_small", 
         "my_custom_config",
         temperature=0.8,
         max_tokens=1024
     )
-    print(f"自定义配置: {custom_config.to_dict()}")
+    print(f"Custom configuration: {custom_config.to_dict()}")
     
-    print("\n配置文件已保存到:", config_manager.config_dir) 
+    print("\nConfiguration files saved to:", config_manager.config_dir) 

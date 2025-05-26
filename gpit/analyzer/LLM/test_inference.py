@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-推理系统测试脚本
-用于验证各个组件是否正常工作
+Inference system test script
+For verifying that all components work correctly
 """
 
 import unittest
@@ -13,10 +13,10 @@ from inference import infer, generate_inference_code, parse_inference_output
 
 
 class TestInferenceConfig(unittest.TestCase):
-    """测试配置系统"""
+    """Test configuration system"""
     
     def test_config_creation(self):
-        """测试配置创建"""
+        """Test configuration creation"""
         config = InferenceConfig(
             model_path="test/model",
             temperature=0.8,
@@ -27,7 +27,7 @@ class TestInferenceConfig(unittest.TestCase):
         self.assertEqual(config.max_tokens, 1024)
     
     def test_config_serialization(self):
-        """测试配置序列化"""
+        """Test configuration serialization"""
         config = InferenceConfig(model_path="test/model", temperature=0.7)
         config_dict = config.to_dict()
         new_config = InferenceConfig.from_dict(config_dict)
@@ -36,33 +36,33 @@ class TestInferenceConfig(unittest.TestCase):
         self.assertEqual(config.temperature, new_config.temperature)
     
     def test_config_manager(self):
-        """测试配置管理器"""
+        """Test configuration manager"""
         manager = ConfigManager()
         
-        # 测试预定义配置
+        # Test predefined configurations
         config = manager.get_config("qwen_small")
         self.assertIsNotNone(config)
         self.assertEqual(config.model_path, "Qwen/Qwen3-1.7B")
         
-        # 测试列出配置
+        # Test list configurations
         configs = manager.list_configs()
         self.assertIn("qwen_small", configs)
         self.assertIn("creative_mode", configs)
 
 
 class TestEngines(unittest.TestCase):
-    """测试引擎"""
+    """Test engines"""
     
     def test_vllm_engine(self):
-        """测试VllmEngine"""
+        """Test VllmEngine"""
         engine = VllmEngine()
         
-        # 测试导入代码生成
+        # Test import code generation
         import_code = engine.import_engine
         self.assertIn("vllm", import_code)
         self.assertIn("SamplingParams", import_code)
         
-        # 测试模型加载代码生成
+        # Test model loading code generation
         load_code = engine.load_model(
             model_path="test/model",
             dtype="float16", 
@@ -74,23 +74,23 @@ class TestEngines(unittest.TestCase):
         self.assertIn("LLM", load_code)
     
     def test_sglang_engine(self):
-        """测试SglangEngine"""
+        """Test SglangEngine"""
         engine = SglangEngine()
         
-        # 测试导入代码生成
+        # Test import code generation
         import_code = engine.import_engine
         self.assertIn("sglang", import_code)
         
-        # 测试模型加载代码生成
+        # Test model loading code generation
         load_code = engine.load_model("test/model")
         self.assertIn("test/model", load_code)
 
 
 class TestInference(unittest.TestCase):
-    """测试推理功能"""
+    """Test inference functionality"""
     
     def test_generate_inference_code(self):
-        """测试推理代码生成"""
+        """Test inference code generation"""
         engine = VllmEngine()
         config = InferenceConfig(
             model_path="test/model",
@@ -102,7 +102,7 @@ class TestInference(unittest.TestCase):
         
         code = generate_inference_code(
             engine=engine,
-            prompts="测试提示词",
+            prompts="test prompt",
             model_path="test/model",
             config=config,
             temperature=0.7,
@@ -111,99 +111,99 @@ class TestInference(unittest.TestCase):
             max_tokens=100
         )
         
-        # 检查生成的代码包含必要组件
+        # Check that generated code contains necessary components
         self.assertIn("import", code)
         self.assertIn("test/model", code)
-        self.assertIn("测试提示词", code)
+        self.assertIn("test prompt", code)
         self.assertIn("INFERENCE_RESULT_START", code)
         self.assertIn("INFERENCE_RESULT_END", code)
     
     def test_parse_inference_output(self):
-        """测试输出解析"""
-        # 测试正常输出
+        """Test output parsing"""
+        # Test normal output
         stdout = """
         Loading model...
         INFERENCE_RESULT_START
-        这是生成的文本结果
+        This is the generated text result
         INFERENCE_RESULT_END
         Process completed.
         """
         
         result = parse_inference_output(stdout)
-        self.assertEqual(result, "这是生成的文本结果")
+        self.assertEqual(result, "This is the generated text result")
         
-        # 测试多行输出
+        # Test multiline output
         stdout_multiline = """
         INFERENCE_RESULT_START
-        第一行结果
-        第二行结果
+        First line result
+        Second line result
         INFERENCE_RESULT_END
         """
         
         result = parse_inference_output(stdout_multiline)
-        self.assertEqual(result, "第一行结果\n第二行结果")
+        self.assertEqual(result, "First line result\nSecond line result")
     
     def test_config_loading_in_infer(self):
-        """测试推理函数中的配置加载"""
+        """Test configuration loading in inference function"""
         engine = VllmEngine()
         
-        # 这个测试不会真正执行推理，但会测试配置处理逻辑
+        # This test won't actually run inference, but will test config processing logic
         try:
-            # 测试使用配置名称（会因为没有真实模型而失败，但可以测试配置加载）
+            # Test using config name (will fail due to no real model, but can test config loading)
             config = load_inference_config("qwen_small")
             self.assertEqual(config.model_path, "Qwen/Qwen3-1.7B")
             
-            # 测试使用配置对象
+            # Test using config object
             custom_config = InferenceConfig(model_path="test/model")
-            # 这里我们只测试配置处理，不执行实际推理
+            # Here we only test config processing, not actual inference
             
         except Exception as e:
-            # 预期会失败，因为没有真实的模型和环境
+            # Expected to fail because there's no real model and environment
             pass
 
 
 class TestEndToEnd(unittest.TestCase):
-    """端到端测试（需要真实环境）"""
+    """End-to-end tests (requires real environment)"""
     
     def setUp(self):
-        """测试前准备"""
+        """Setup before tests"""
         self.engine = VllmEngine()
         
     def test_config_file_operations(self):
-        """测试配置文件操作"""
+        """Test configuration file operations"""
         with tempfile.TemporaryDirectory() as temp_dir:
             manager = ConfigManager(config_dir=temp_dir)
             
-            # 创建自定义配置
+            # Create custom configuration
             config = InferenceConfig(
                 model_path="test/model",
                 temperature=0.8,
                 max_tokens=512
             )
             
-            # 保存配置
+            # Save configuration
             manager.save_config("test_config", config)
             
-            # 加载配置
+            # Load configuration
             loaded_config = manager.get_config("test_config")
             self.assertIsNotNone(loaded_config)
             self.assertEqual(loaded_config.model_path, "test/model")
             self.assertEqual(loaded_config.temperature, 0.8)
             
-            # 测试模板配置创建
+            # Test template configuration creation
             template_config = manager.create_config_from_template(
                 "test_config",
                 "new_config", 
                 temperature=0.9
             )
             self.assertEqual(template_config.temperature, 0.9)
-            self.assertEqual(template_config.model_path, "test/model")  # 继承自模板
+            self.assertEqual(template_config.model_path, "test/model")  # Inherited from template
 
 
 def run_functional_test():
-    """运行功能测试（需要真实环境）"""
-    print("开始功能测试...")
-    print("注意：这需要真实的模型和GPU环境")
+    """Run functional tests (requires real environment)"""
+    print("Starting functional tests...")
+    print("Note: This requires real model and GPU environment")
     
     try:
         from engines import VllmEngine
@@ -211,41 +211,41 @@ def run_functional_test():
         
         engine = VllmEngine()
         
-        # 测试配置系统
-        print("1. 测试配置系统...")
+        # Test configuration system
+        print("1. Testing configuration system...")
         from inference_config import config_manager
         configs = config_manager.list_configs()
-        print(f"   可用配置: {list(configs.keys())}")
+        print(f"   Available configurations: {list(configs.keys())}")
         
-        # 测试代码生成
-        print("2. 测试代码生成...")
+        # Test code generation
+        print("2. Testing code generation...")
         config = load_inference_config("qwen_small")
         code = generate_inference_code(
-            engine, "测试", config.model_path, config,
+            engine, "test", config.model_path, config,
             0.7, 0.95, 1.0, 100
         )
-        print(f"   生成的代码长度: {len(code)} 字符")
+        print(f"   Generated code length: {len(code)} characters")
         
-        print("功能测试完成！")
+        print("Functional tests completed!")
         
     except ImportError as e:
-        print(f"导入错误: {e}")
-        print("请确保所有模块都在正确位置")
+        print(f"Import error: {e}")
+        print("Please ensure all modules are in correct location")
     except Exception as e:
-        print(f"测试过程中出错: {e}")
+        print(f"Error during testing: {e}")
 
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("推理系统单元测试")
+    print("Inference System Unit Tests")
     print("=" * 60)
     
-    # 运行单元测试
+    # Run unit tests
     unittest.main(argv=[''], exit=False, verbosity=2)
     
     print("\n" + "=" * 60)
-    print("功能测试")
-    print("=" * 60)
+    print("Functional Tests")
+    print("n" + "=" * 60)
     
-    # 运行功能测试
+    # Run functional tests
     run_functional_test() 
